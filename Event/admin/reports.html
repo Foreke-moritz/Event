@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reports & Analytics - Admin</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="../css/style.css">
+    <link rel="stylesheet" href="../css/responsive.css">
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <style>
+        .report-toolbar { display: flex; gap: 1rem; flex-wrap: wrap; margin-bottom: 1.5rem; background: var(--bg-color); padding: 1.5rem; border-radius: var(--border-radius); border: 1px solid var(--border-color); }
+        .report-toolbar select, .report-toolbar input { flex: 1; min-width: 150px; }
+        .report-panel { display: none; }
+        .report-panel.active { display: block; }
+    </style>
+</head>
+<body>
+    <div class="app-container">
+        <!-- Sidebar -->
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <i class="fa-solid fa-store"></i> <span id="sidebarBizName">CoreInventory</span>
+            </div>
+            <nav class="sidebar-nav">
+                <a href="dashboard.html" class="nav-item"><i class="fa-solid fa-chart-pie"></i> Dashboard</a>
+                <a href="products.html" class="nav-item"><i class="fa-solid fa-box-open"></i> Products</a>
+                <a href="categories.html" class="nav-item"><i class="fa-solid fa-tags"></i> Categories</a>
+                <a href="stock.html" class="nav-item"><i class="fa-solid fa-boxes-stacked"></i> Stock Management</a>
+                <a href="sales.html" class="nav-item"><i class="fa-solid fa-cart-shopping"></i> Sales</a>
+                <a href="reports.html" class="nav-item active"><i class="fa-solid fa-chart-line"></i> Reports</a>
+                <a href="users.html" class="nav-item"><i class="fa-solid fa-users"></i> Staff Users</a>
+                <a href="settings.html" class="nav-item"><i class="fa-solid fa-gear"></i> Settings</a>
+                <a href="#" onclick="handleLogout()" class="nav-item" style="color: var(--danger); margin-top: 2rem;"><i class="fa-solid fa-sign-out-alt"></i> Logout</a>
+            </nav>
+        </aside>
+
+        <main class="main-content">
+            <header class="topbar">
+                <div class="d-flex align-center gap-3">
+                    <button class="sidebar-toggle" id="sidebarToggle"><i class="fa-solid fa-bars"></i></button>
+                    <h2 class="page-title">Analytics Engine</h2>
+                </div>
+                <div class="user-menu d-flex gap-2">
+                    <button class="btn btn-outline" id="btnPrint" onclick="window.print()"><i class="fa-solid fa-print"></i> Print</button>
+                    <button class="btn btn-primary" id="btnExport"><i class="fa-solid fa-file-csv"></i> Export CSV</button>
+                </div>
+            </header>
+
+            <div class="content-area">
+                <div class="report-toolbar">
+                    <div style="flex: 1.5; min-width: 250px;">
+                        <label class="form-label">Report Type</label>
+                        <select id="rType" class="form-control" style="border-color: var(--primary-color);">
+                            <optgroup label="Sales Execution">
+                                <option value="sales_daily">Daily Sales Summary</option>
+                                <option value="sales_weekly">Weekly / Monthly Breakdown</option>
+                                <option value="sales_profit">Net Profit Valuation</option>
+                                <option value="staff_perf">Staff Performance Matrix</option>
+                            </optgroup>
+                            <optgroup label="Inventory Mapping">
+                                <option value="inv_full">Full Inventory Ledger</option>
+                                <option value="inv_low">Low & Out-of-Stock Triggers</option>
+                                <option value="stock_moves">Stock Movement Tracking</option>
+                            </optgroup>
+                        </select>
+                    </div>
+
+                    <div>
+                        <label class="form-label">Start Date</label>
+                        <input type="date" id="rStart" class="form-control">
+                    </div>
+                    <div>
+                        <label class="form-label">End Date</label>
+                        <input type="date" id="rEnd" class="form-control">
+                    </div>
+
+                    <div>
+                        <label class="form-label">Method Filter</label>
+                        <select id="rMethod" class="form-control">
+                            <option value="all">All Methods</option>
+                            <option value="Cash">Cash</option>
+                            <option value="Mobile Money">Mobile Money</option>
+                            <option value="Bank Transfer">Bank Transfer</option>
+                            <option value="Credit">Credit</option>
+                        </select>
+                    </div>
+
+                    <div class="d-flex align-center" style="gap: 0.5rem; margin-top: 1.5rem;">
+                        <button class="btn btn-primary" id="btnGenerate">Generate Report</button>
+                        <button class="btn btn-outline" id="btnClear" title="Clear Filters"><i class="fa-solid fa-eraser"></i></button>
+                    </div>
+                </div>
+
+                <div class="card" id="reportDisplay" style="min-height: 400px;">
+                    <div style="text-align: center; color: var(--text-muted); margin-top: 4rem;" id="reportPlaceholder">
+                        <i class="fa-solid fa-chart-line" style="font-size: 3rem; margin-bottom: 1rem; color: rgba(0,0,0,0.1)"></i>
+                        <h3>Analytical Engine Ready</h3>
+                        <p>Configure your filters and strictly press Generate to fetch SQL data.</p>
+                    </div>
+
+                    <!-- Dynamic Table Renderer Container -->
+                    <div class="table-container" id="reportTableContainer" style="display:none;">
+                        <h3 id="reportTitle" style="margin-bottom: 1rem; color: var(--primary-color);"></h3>
+                        <div class="d-flex gap-4" id="reportSummaryBox" style="margin-bottom: 1.5rem; font-weight: 500;"></div>
+                        <table id="dynamicTable">
+                            <thead id="dynamicTableHead"></thead>
+                            <tbody id="dynamicTableBody"></tbody>
+                        </table>
+                    </div>
+
+                </div>
+
+            </div>
+        </main>
+    </div>
+
+    <script src="../js/supabase-config.js"></script>
+    <script src="../js/utils.js"></script>
+    <script src="../js/route-guard.js"></script>
+    <script src="../js/auth.js"></script>
+    <script src="../js/admin-reports.js"></script>
+    <script>
+        document.getElementById('sidebarToggle').addEventListener('click', () => {
+            document.getElementById('sidebar').classList.toggle('show');
+        });
+    </script>
+</body>
+</html>

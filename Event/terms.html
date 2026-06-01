@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Terms of Service - CoreInventory</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="css/style.css">
+    <style>
+        body { background: #F8FAFC; }
+        .page-hero { background: linear-gradient(135deg, #0F172A 0%, #1E293B 100%); padding: 4rem 0; text-align: center; color: white; position: relative; overflow: hidden; }
+        .page-hero h1 { font-size: 2.75rem; font-weight: 800; margin-bottom: 0.75rem; letter-spacing: -0.03em; }
+        .page-hero p { color: #94A3B8; font-size: 1.1rem; max-width: 600px; margin: 0 auto; }
+        .page-hero .back-link { position: absolute; top: 2rem; left: 2.5rem; color: #94A3B8; text-decoration: none; display: flex; align-items: center; gap: 0.5rem; font-size: 0.95rem; font-weight: 500; transition: color 0.2s; }
+        .page-hero .back-link:hover { color: #FFFFFF; }
+        .content-section { max-width: 800px; margin: 3rem auto; padding: 0 1.5rem; }
+        .content-card { background: #FFFFFF; border-radius: 16px; padding: 2.5rem; border: 1px solid #E2E8F0; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.02); margin-bottom: 2rem; }
+        .content-card h2 { font-size: 1.5rem; font-weight: 700; color: #0F172A; margin-bottom: 1rem; display: flex; align-items: center; gap: 0.75rem; }
+        .content-card h2 i { color: #10B981; font-size: 1.25rem; }
+        .content-card p, .content-card li { color: #475569; line-height: 1.8; margin-bottom: 0.75rem; }
+        .content-card ul { padding-left: 1.5rem; }
+        .effective-date { text-align: center; color: #64748B; font-size: 0.9rem; margin-bottom: 2rem; }
+        .page-footer { text-align: center; padding: 2rem; color: #94A3B8; font-size: 0.85rem; }
+        .page-footer a { color: #10B981; text-decoration: none; font-weight: 600; }
+
+        /* Animations */
+        @keyframes fadeInDown { from { opacity: 0; transform: translateY(-30px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes fadeInUp { from { opacity: 0; transform: translateY(40px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes scaleIn { from { opacity: 0; transform: scale(0.8); } to { opacity: 1; transform: scale(1); } }
+        .page-hero .container { animation: fadeInDown 0.8s ease-out; }
+        .page-hero .back-link { animation: fadeInDown 0.6s ease-out 0.2s both; }
+        .effective-date { animation: fadeInUp 0.5s ease-out 0.3s both; }
+        .content-card { opacity: 0; transform: translateY(40px); transition: all 0.6s cubic-bezier(0.16, 1, 0.3, 1); }
+        .content-card.visible { opacity: 1; transform: translateY(0); }
+        .content-card:hover { transform: translateY(-4px); box-shadow: 0 12px 24px -4px rgba(0,0,0,0.08); }
+        .content-card:nth-child(1) { transition-delay: 0s; }
+        .content-card:nth-child(2) { transition-delay: 0.1s; }
+        .content-card:nth-child(3) { transition-delay: 0.2s; }
+        .content-card:nth-child(4) { transition-delay: 0.3s; }
+        .content-card:nth-child(5) { transition-delay: 0.4s; }
+        .content-card:nth-child(6) { transition-delay: 0.5s; }
+        .content-card:nth-child(7) { transition-delay: 0.6s; }
+        .content-card:nth-child(8) { transition-delay: 0.7s; }
+        .page-hero i { animation: scaleIn 0.6s ease-out 0.3s both; }
+        .page-footer { animation: fadeInUp 0.5s ease-out 0.5s both; }
+    </style>
+</head>
+<body>
+    <div class="page-hero">
+        <a href="index.html" class="back-link"><i class="fa-solid fa-arrow-left"></i> Back to Home</a>
+        <div class="container">
+            <i class="fa-solid fa-file-contract" style="font-size: 3rem; color: #10B981; margin-bottom: 1.5rem;"></i>
+            <h1>Terms of Service</h1>
+            <p>Please read these terms carefully before using the CoreInventory platform.</p>
+        </div>
+    </div>
+
+    <p class="effective-date">Effective Date: June 1, 2026</p>
+
+    <div class="content-section">
+        <div class="content-card">
+            <h2><i class="fa-solid fa-handshake"></i> 1. Acceptance of Terms</h2>
+            <p>By accessing or using CoreInventory ("the Service"), you agree to be bound by these Terms of Service. If you do not agree to all the terms, you may not access or use the Service.</p>
+            <p>CoreInventory reserves the right to update these terms at any time. Continued use of the platform after changes constitutes acceptance of the modified terms.</p>
+        </div>
+
+        <div class="content-card">
+            <h2><i class="fa-solid fa-clipboard-list"></i> 2. Service Description</h2>
+            <p>CoreInventory is a cloud-based inventory and sales management platform designed for small businesses. The Service provides:</p>
+            <ul>
+                <li>Product and category management with real-time stock tracking</li>
+                <li>Point-of-sale functionality with receipt generation</li>
+                <li>Revenue and profit analytics with date-filtered reporting</li>
+                <li>Role-based access control with Admin and Staff portals</li>
+                <li>CSV report export and business settings configuration</li>
+            </ul>
+        </div>
+
+        <div class="content-card">
+            <h2><i class="fa-solid fa-user-check"></i> 3. User Accounts</h2>
+            <p>To use CoreInventory, you must register with a valid email address and create a secure password. You agree to:</p>
+            <ul>
+                <li>Provide accurate and complete registration information</li>
+                <li>Maintain the security and confidentiality of your login credentials</li>
+                <li>Accept responsibility for all activities that occur under your account</li>
+                <li>Notify us immediately of any unauthorized access to your account</li>
+            </ul>
+            <p>Admin users may create Staff accounts. Admins are responsible for managing and monitoring staff access to their business data.</p>
+        </div>
+
+        <div class="content-card">
+            <h2><i class="fa-solid fa-ban"></i> 4. Prohibited Uses</h2>
+            <p>You agree not to use CoreInventory for any of the following:</p>
+            <ul>
+                <li>Any unlawful purpose or activity that violates local, national, or international law</li>
+                <li>Attempting to access other users' accounts or data</li>
+                <li>Introducing malicious code, viruses, or harmful scripts</li>
+                <li>Reverse-engineering, decompiling, or attempting to extract the source code</li>
+                <li>Overloading or disrupting the platform infrastructure</li>
+            </ul>
+        </div>
+
+        <div class="content-card">
+            <h2><i class="fa-solid fa-database"></i> 5. Data Ownership</h2>
+            <p>You retain full ownership of all business data you enter into CoreInventory, including products, categories, sales records, and reports.</p>
+            <p>CoreInventory does not claim any intellectual property rights over your data. You may export or delete your data at any time.</p>
+            <p>We reserve the right to use aggregated, anonymized data for service improvement purposes only.</p>
+        </div>
+
+        <div class="content-card">
+            <h2><i class="fa-solid fa-triangle-exclamation"></i> 6. Limitation of Liability</h2>
+            <p>CoreInventory is provided on an "as is" and "as available" basis. While we strive for maximum uptime and data integrity, we do not guarantee:</p>
+            <ul>
+                <li>Uninterrupted or error-free service availability</li>
+                <li>That the platform will meet all of your specific business requirements</li>
+                <li>Recovery of data lost due to user error or unauthorized account access</li>
+            </ul>
+            <p>To the maximum extent permitted by law, CoreInventory shall not be liable for any indirect, incidental, or consequential damages arising from use of the Service.</p>
+        </div>
+
+        <div class="content-card">
+            <h2><i class="fa-solid fa-gavel"></i> 7. Termination</h2>
+            <p>You may stop using CoreInventory at any time by deleting your account.</p>
+            <p>We reserve the right to suspend or terminate accounts that violate these Terms of Service, without prior notice. Upon termination, your access will be revoked and your data may be permanently deleted after a 30-day grace period.</p>
+        </div>
+
+        <div class="content-card">
+            <h2><i class="fa-solid fa-envelope"></i> 8. Contact</h2>
+            <p>For questions about these Terms of Service, please contact us:</p>
+            <p><strong>Email:</strong> support@coreinventory.com</p>
+            <p><strong>Phone:</strong> +237 682 68 53 64</p>
+        </div>
+    </div>
+
+    <div class="page-footer">
+        <p>&copy; 2026 CoreInventory. All rights reserved. | <a href="index.html">Back to Home</a></p>
+    </div>
+
+    <script>
+        const cards = document.querySelectorAll('.content-card');
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) entry.target.classList.add('visible');
+            });
+        }, { threshold: 0.1 });
+        cards.forEach(card => observer.observe(card));
+    </script>
+</body>
+</html>

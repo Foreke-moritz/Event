@@ -1,0 +1,651 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CoreInventory - Business Management Platform</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="css/style.css">
+    
+    <style>
+        /* Landing Page Styles */
+        body { font-family: 'Inter', sans-serif; background-color: #FFFFFF; color: #1E293B; overflow-x: hidden; }
+        .container { max-width: 1200px; margin: 0 auto; padding: 0 2rem; }
+        
+        /* ============ NAVIGATION ============ */
+        .navbar { 
+            display: grid; grid-template-columns: 200px 1fr 200px; align-items: center; 
+            padding: 1.5rem 0; position: relative; z-index: 10; width: 100%;
+        }
+        .navbar-left { display: flex; align-items: center; }
+        .logo { font-size: 1.5rem; font-weight: 800; color: #FFFFFF; display: flex; align-items: center; gap: 0.5rem; text-decoration: none; }
+        .logo i { color: #10B981; }
+        .nav-links { display: flex; gap: 3rem; justify-content: center; align-items: center; }
+        .nav-links a { font-weight: 500; font-size: 0.95rem; color: rgba(255,255,255,0.75); transition: color 0.2s; text-decoration: none; }
+        .nav-links a:hover { color: #FFFFFF; }
+        .nav-auth { display: flex; gap: 1rem; align-items: center; justify-content: flex-end; }
+
+        /* ============ HERO SECTION ============ */
+        .hero-wrapper {
+            background: linear-gradient(135deg, #0F172A 0%, #1E293B 50%, #0F172A 100%);
+            position: relative;
+            overflow: hidden;
+            min-height: 90vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Animated gradient mesh behind hero */
+        .hero-wrapper::before {
+            content: '';
+            position: absolute;
+            top: -50%; left: -50%;
+            width: 200%; height: 200%;
+            background: 
+                radial-gradient(circle at 20% 50%, rgba(16, 185, 129, 0.08) 0%, transparent 50%),
+                radial-gradient(circle at 80% 20%, rgba(59, 130, 246, 0.06) 0%, transparent 50%),
+                radial-gradient(circle at 60% 80%, rgba(16, 185, 129, 0.05) 0%, transparent 50%);
+            animation: meshDrift 20s ease-in-out infinite alternate;
+        }
+        @keyframes meshDrift {
+            0%   { transform: translate(0, 0) rotate(0deg); }
+            100% { transform: translate(-3%, -3%) rotate(3deg); }
+        }
+
+        /* Floating Orbs */
+        .orb {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(60px);
+            opacity: 0.12;
+            pointer-events: none;
+        }
+        .orb-1 { width: 400px; height: 400px; background: #10B981; top: 10%; right: -5%; animation: float1 12s ease-in-out infinite; }
+        .orb-2 { width: 300px; height: 300px; background: #3B82F6; bottom: 10%; left: -5%; animation: float2 15s ease-in-out infinite; }
+        .orb-3 { width: 200px; height: 200px; background: #10B981; top: 50%; left: 30%; animation: float3 10s ease-in-out infinite; }
+
+        @keyframes float1 {
+            0%, 100% { transform: translate(0, 0); }
+            50% { transform: translate(-30px, 20px); }
+        }
+        @keyframes float2 {
+            0%, 100% { transform: translate(0, 0); }
+            50% { transform: translate(20px, -30px); }
+        }
+        @keyframes float3 {
+            0%, 100% { transform: translate(0, 0) scale(1); }
+            50% { transform: translate(-15px, 10px) scale(1.1); }
+        }
+
+        /* Grid Pattern overlay */
+        .grid-pattern {
+            position: absolute; inset: 0;
+            background-image: 
+                linear-gradient(rgba(255,255,255,0.02) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(255,255,255,0.02) 1px, transparent 1px);
+            background-size: 60px 60px;
+            pointer-events: none;
+        }
+
+        .hero { 
+            padding: 0 0 6rem; text-align: center; 
+            position: relative; z-index: 2; flex: 1;
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+        }
+
+        .hero-content {
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            width: 100%; max-width: 800px; margin: 0 auto;
+        }
+
+        /* Nav Buttons */
+        .nav-btn-primary { padding: 0.5rem 1.5rem; font-size: 0.95rem; font-weight: 600; box-shadow: 0 0 15px rgba(16, 185, 129, 0.2); transition: all 0.2s ease; }
+        .nav-btn-primary:active { transform: scale(0.95); }
+        .nav-btn-outline { padding: 0.5rem 1.5rem; font-size: 0.95rem; font-weight: 500; color: #FFFFFF; border-color: rgba(255,255,255,0.2); background-color: transparent; transition: all 0.2s ease; }
+        .nav-btn-outline:hover { background: rgba(255,255,255,0.1); border-color: rgba(255,255,255,0.5); transform: translateY(-1px); }
+
+
+        /* Animated badge */
+        .hero-badge {
+            display: inline-flex; align-items: center; gap: 0.5rem;
+            padding: 0.5rem 1.25rem; border-radius: 999px;
+            background: rgba(16, 185, 129, 0.1);
+            border: 1px solid rgba(16, 185, 129, 0.2);
+            color: #10B981; font-size: 0.85rem; font-weight: 600;
+            margin-bottom: 0.15rem;
+            animation: badgeFadeIn 0.8s ease-out 0.2s both;
+        }
+        .hero-badge .dot { width: 6px; height: 6px; border-radius: 50%; background: #10B981; animation: dotPulse 2s ease-in-out infinite; }
+        @keyframes dotPulse { 0%, 100% { opacity: 1; transform: scale(1); } 50% { opacity: 0.5; transform: scale(1.5); } }
+        @keyframes badgeFadeIn { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }
+
+        .hero h1 { 
+            margin-top: 0;
+            font-size: 4rem; font-weight: 800; line-height: 1.1; 
+            margin-bottom: 1.25rem; color: #FFFFFF;
+            letter-spacing: -0.03em;
+            animation: heroTitleIn 0.8s ease-out 0.4s both;
+        }
+        .hero h1 span { 
+            background: linear-gradient(135deg, #10B981 0%, #34D399 100%);
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        @keyframes heroTitleIn {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .hero p { 
+            font-size: 1.2rem; color: #94A3B8; max-width: 600px; margin: 0 auto 3rem; line-height: 1.7;
+            animation: heroTextIn 0.8s ease-out 0.6s both;
+        }
+        @keyframes heroTextIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .hero-btns { 
+            display: flex; gap: 1rem; justify-content: center;
+            animation: heroBtnsIn 0.8s ease-out 0.8s both;
+        }
+        .hero-btns .btn-primary { 
+            padding: 1rem 2.5rem; font-size: 1rem; font-weight: 700;
+            box-shadow: 0 0 30px rgba(16, 185, 129, 0.3);
+            transition: all 0.2s ease;
+        }
+        .hero-btns .btn-primary:active {
+            transform: scale(0.96); box-shadow: 0 0 15px rgba(16, 185, 129, 0.2);
+        }
+        .hero-btns .btn-outline { 
+            padding: 1rem 2.5rem; font-size: 1rem; font-weight: 600;
+            color: #FFFFFF; border-color: rgba(255,255,255,0.2);
+            background-color: transparent;
+            transition: all 0.2s ease;
+        }
+        .hero-btns .btn-outline:hover { 
+            background: rgba(255,255,255,0.05); border-color: rgba(255,255,255,0.4); 
+            transform: translateY(-2px);
+        }
+        @keyframes heroBtnsIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Stats Counter bar under hero */
+        .stats-bar {
+            display: flex; justify-content: center; gap: 4rem;
+            padding: 2rem 0; margin-top: 4rem;
+            animation: heroTextIn 0.8s ease-out 1s both;
+            width: 100%; border-top: 1px solid rgba(255,255,255,0.1);
+        }
+        .stat-item { text-align: center; }
+        .stat-item .num { font-size: 2rem; font-weight: 800; color: #10B981; display: block; }
+        .stat-item .label { font-size: 0.85rem; color: #94A3B8; font-weight: 500; margin-top: 0.25rem; display: block; }
+
+        /* ============ FEATURES SECTION ============ */
+        .section { padding: 6rem 0; }
+        .section-header { text-align: center; margin-bottom: 4rem; }
+        .section-header h2 { font-size: 2.5rem; font-weight: 800; margin-bottom: 1rem; color: #0F172A; letter-spacing: -0.03em; }
+        .section-header p { color: #64748B; font-size: 1.125rem; max-width: 550px; margin: 0 auto; line-height: 1.6; }
+        
+        .grid-3 { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 2rem; }
+        .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 3rem; align-items: stretch; }
+        
+        .feature-card { 
+            padding: 2.5rem; background: #FFFFFF; border-radius: 16px; 
+            transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1); 
+            border: 1px solid #E2E8F0;
+            position: relative; overflow: hidden;
+        }
+        .feature-card::after {
+            content: ''; position: absolute; bottom: 0; left: 0; right: 0;
+            height: 3px; background: linear-gradient(90deg, #10B981, #34D399);
+            transform: scaleX(0); transform-origin: left;
+            transition: transform 0.35s ease;
+        }
+        .feature-card:hover { 
+            transform: translateY(-8px);
+            box-shadow: 0 20px 40px -12px rgba(15, 23, 42, 0.12);
+        }
+        .feature-card:hover::after { transform: scaleX(1); }
+
+        .feature-icon { 
+            width: 56px; height: 56px; border-radius: 12px; 
+            background: linear-gradient(135deg, rgba(16, 185, 129, 0.1), rgba(16, 185, 129, 0.05)); 
+            color: #10B981; display: flex; align-items: center; justify-content: center; 
+            font-size: 1.4rem; margin-bottom: 1.5rem;
+            transition: transform 0.3s ease;
+        }
+        .feature-card:hover .feature-icon { transform: scale(1.1) rotate(-5deg); }
+
+        .feature-card h3 { font-size: 1.2rem; font-weight: 700; margin-bottom: 0.75rem; color: #0F172A; }
+        .feature-card p { color: #64748B; font-size: 0.95rem; line-height: 1.7; }
+
+        /* ============ ROLE CARDS ============ */
+        .role-card { 
+            padding: 3rem; border: 1px solid #E2E8F0; border-radius: 20px; 
+            background: #FFFFFF; transition: all 0.35s ease;
+            position: relative; overflow: hidden;
+        }
+        .role-card::before {
+            content: ''; position: absolute; top: 0; left: 0; right: 0;
+            height: 4px; background: linear-gradient(90deg, #10B981, #059669);
+        }
+        .role-card:hover { 
+            box-shadow: 0 20px 40px -15px rgba(15, 23, 42, 0.1);
+            transform: translateY(-5px);
+        }
+        .role-card h3 { font-size: 1.5rem; margin-bottom: 1rem; color: #0F172A; }
+        .role-card ul { margin-top: 1.5rem; }
+        .role-card ul li { margin-bottom: 1rem; display: flex; align-items: flex-start; gap: 0.75rem; color: #475569; font-size: 0.95rem; }
+        .role-card ul li i { color: #10B981; margin-top: 0.15rem; font-size: 0.85rem; }
+        .role-icon-wrap { 
+            width: 56px; height: 56px; border-radius: 12px; display: flex; align-items: center; justify-content: center;
+            font-size: 1.5rem;
+        }
+        .role-icon-admin { background: linear-gradient(135deg, rgba(16, 185, 129, 0.1), rgba(5, 150, 105, 0.05)); color: #059669; }
+        .role-icon-staff { background: linear-gradient(135deg, rgba(59, 130, 246, 0.1), rgba(37, 99, 235, 0.05)); color: #3B82F6; }
+
+        /* ============ FOOTER ============ */
+        footer { background: #0F172A; color: white; padding: 5rem 0 2rem; margin-top: 0; }
+        .footer-grid { display: grid; grid-template-columns: 2fr 1fr 1fr; gap: 4rem; margin-bottom: 3rem; }
+        .footer-logo { color: white; margin-bottom: 1rem; font-size: 1.4rem; }
+        .footer-logo i { color: #10B981; }
+        .footer-text { color: #94a3b8; font-size: 0.9rem; line-height: 1.7; }
+        .footer-links h4 { margin-bottom: 1.25rem; font-size: 1rem; font-weight: 600; }
+        .footer-links ul li { margin-bottom: 0.75rem; }
+        .footer-links ul li a { color: #94a3b8; font-size: 0.9rem; transition: all 0.2s; }
+        .footer-links ul li a:hover { color: #10B981; padding-left: 4px; }
+        .copyright { text-align: center; color: #475569; font-size: 0.85rem; padding-top: 2rem; border-top: 1px solid #1E293B; }
+
+        /* ============ SCROLL REVEAL ============ */
+        .reveal {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: opacity 0.7s ease-out, transform 0.7s ease-out;
+        }
+        .reveal.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        .reveal-delay-1 { transition-delay: 0.1s; }
+        .reveal-delay-2 { transition-delay: 0.2s; }
+        .reveal-delay-3 { transition-delay: 0.3s; }
+
+        /* ============ RESPONSIVE ============ */
+        @media (max-width: 768px) {
+            .navbar { display: flex; justify-content: space-between; padding: 1rem 0; }
+            .nav-links, .nav-auth { display: none; }
+            .hero h1 { font-size: 2.5rem; }
+            .hero p { font-size: 1rem; }
+            .grid-2 { grid-template-columns: 1fr; gap: 2rem; }
+            .footer-grid { grid-template-columns: 1fr; gap: 2rem; }
+            .hero { padding: 4rem 0 3rem; }
+            .hero-wrapper { min-height: 70vh; }
+            .stats-bar { gap: 2rem; flex-wrap: wrap; margin-top: 2.5rem; }
+            .stats-bar .stat-item { width: 45%; text-align: center; }
+            .stats-bar .stat-item .num { font-size: 1.6rem; display: block; }
+            .hero-btns { flex-direction: column; align-items: stretch; width: 100%; max-width: 320px; }
+        }
+        /* Home Navigation Active State */
+        .nav-links a.active { color: #10B981; font-weight: 700; }
+
+        /* General Home Page Animations */
+        @keyframes floating {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-15px); }
+        }
+        .about-image { animation: floating 6s ease-in-out infinite; }
+
+        /* Hero Wave & Bubbles */
+        .hero-wave {
+            position: absolute; bottom: -1px; left: 0; width: 100%; height: 80px; z-index: 5;
+            pointer-events: none;
+        }
+        .hero-wave svg { width: 100%; height: 100%; display: block; }
+        .bubbles { position: absolute; width: 100%; height: 100%; z-index: 1; overflow: hidden; top: 0; left: 0; pointer-events: none; }
+        .bubble { position: absolute; bottom: -100px; background: rgba(255, 255, 255, 0.05); border-radius: 50%; animation: rise 10s infinite ease-in; }
+        .bubble:nth-child(1) { left: 10%; width: 40px; height: 40px; animation-duration: 8s; }
+        .bubble:nth-child(2) { left: 20%; width: 80px; height: 80px; animation-duration: 10s; animation-delay: 1s; }
+        .bubble:nth-child(3) { left: 35%; width: 50px; height: 50px; animation-duration: 7s; animation-delay: 2s; }
+        .bubble:nth-child(4) { left: 50%; width: 60px; height: 60px; animation-duration: 11s; animation-delay: 0s; }
+        .bubble:nth-child(5) { left: 65%; width: 35px; height: 35px; animation-duration: 6s; animation-delay: 3s; }
+        .bubble:nth-child(6) { left: 75%; width: 90px; height: 90px; animation-duration: 12s; animation-delay: 1s; }
+        .bubble:nth-child(7) { left: 85%; width: 45px; height: 45px; animation-duration: 8s; animation-delay: 4s; }
+        .bubble:nth-child(8) { left: 90%; width: 25px; height: 25px; animation-duration: 6s; animation-delay: 2s; }
+        @keyframes rise {
+            0% { bottom: -100px; transform: translateX(0); opacity: 0; }
+            50% { opacity: 1; }
+            100% { bottom: 1000px; transform: translateX(-150px); opacity: 0; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Hero Section with Animated Background -->
+    <div class="hero-wrapper">
+        <!-- Floating orbs -->
+        <div class="orb orb-1"></div>
+        <div class="orb orb-2"></div>
+        <div class="orb orb-3"></div>
+        <div class="grid-pattern"></div>
+        
+        <!-- Bubbles -->
+        <div class="bubbles">
+            <div class="bubble"></div><div class="bubble"></div><div class="bubble"></div>
+            <div class="bubble"></div><div class="bubble"></div><div class="bubble"></div>
+            <div class="bubble"></div><div class="bubble"></div>
+        </div>
+
+        <!-- Navigation -->
+        <nav class="container navbar">
+            <div class="navbar-left">
+                <a href="index.html" class="logo"><i class="fa-solid fa-store"></i> CoreInventory</a>
+            </div>
+            <div class="nav-links">
+                <a href="index.html" class="active">Home</a>
+                <a href="#features">Features</a>
+                <a href="#roles">How it Works</a>
+                <a href="#about">About</a>
+                <a href="#contact">Contact</a>
+            </div>
+            <div class="nav-auth">
+                <a href="login.html" class="btn nav-btn-outline">Login</a>
+                <a href="register.html" class="btn nav-btn-primary" style="background:#10B981;color:white;border:none;">Get Started</a>
+            </div>
+        </nav>
+
+        <!-- Hero Content -->
+        <header class="container hero">
+            <div class="hero-content">
+                <div class="hero-badge"><span class="dot"></span> Built for African & Global Small Businesses</div>
+                <h1>Smart Inventory & Sales Management for<br><span>Small Businesses</span></h1>
+                <p>Manage products, track stock, record sales, print receipts, and monitor business performance from one secure platform.</p>
+                <div class="hero-btns">
+                    <a href="register.html" class="btn btn-primary">Get Started</a>
+                    <a href="login.html" class="btn btn-outline">Login</a>
+                </div>
+            </div>
+
+            <!-- Global Stats Bar -->
+            <div class="stats-bar">
+                <div class="stat-item"><div class="num"><span class="count-up" data-target="100">0</span>%</div><span class="label">Cloud Secured</span></div>
+                <div class="stat-item"><div class="num"><span class="count-up" data-target="2">0</span></div><span class="label">Role Portals</span></div>
+                <div class="stat-item"><div class="num"><span class="count-up" data-target="8">0</span>+</div><span class="label">Admin Modules</span></div>
+                <div class="stat-item"><div class="num">∞</div><span class="label">Unlimited Transactions</span></div>
+            </div>
+        </header>
+
+        <!-- Bottom Hero Wave -->
+        <div class="hero-wave">
+            <svg viewBox="0 0 1440 120" preserveAspectRatio="none">
+                <path d="M0,80 C320,120 420,0 740,60 C1060,120 1280,0 1440,60 L1440,120 L0,120 Z" fill="#F8FAFC"></path>
+            </svg>
+        </div>
+    </div>
+
+    <!-- Benefits Section -->
+    <section id="features" class="section" style="background-color: #F8FAFC;">
+        <div class="container">
+            <div class="section-header reveal">
+                <h2>Why Choose CoreInventory?</h2>
+                <p>Everything you need to run a profitable, organized, and secure small business.</p>
+            </div>
+            
+            <div class="grid-3">
+                <div class="feature-card reveal reveal-delay-1">
+                    <div class="feature-icon"><i class="fa-solid fa-boxes-stacked"></i></div>
+                    <h3>Automated Inventory</h3>
+                    <p>Stock quantities reduce automatically after every sale. Get instant low-stock alerts and never lose track of your products again.</p>
+                </div>
+                <div class="feature-card reveal reveal-delay-2">
+                    <div class="feature-icon"><i class="fa-solid fa-chart-line"></i></div>
+                    <h3>Real-Time Analytics</h3>
+                    <p>Track revenue, profit margins, and staff performance with dynamic reports you can filter by date, product, or payment method.</p>
+                </div>
+                <div class="feature-card reveal reveal-delay-3">
+                    <div class="feature-icon"><i class="fa-solid fa-shield-halved"></i></div>
+                    <h3>Cloud-Secured Data</h3>
+                    <p>Your data is protected by PostgreSQL Row Level Security. Each business sees only its own records — guaranteed isolation.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Additional Features -->
+    <section class="section">
+        <div class="container">
+            <div class="grid-3">
+                <div class="feature-card reveal reveal-delay-1">
+                    <div class="feature-icon" style="background: linear-gradient(135deg, rgba(59,130,246,0.1), rgba(59,130,246,0.05)); color: #3B82F6;">
+                        <i class="fa-solid fa-receipt"></i>
+                    </div>
+                    <h3>Printable Receipts</h3>
+                    <p>Generate professional thermal receipts instantly after every sale — with business branding, itemized lists, and payment details.</p>
+                </div>
+                <div class="feature-card reveal reveal-delay-2">
+                    <div class="feature-icon" style="background: linear-gradient(135deg, rgba(245,158,11,0.1), rgba(245,158,11,0.05)); color: #F59E0B;">
+                        <i class="fa-solid fa-users-gear"></i>
+                    </div>
+                    <h3>Staff Management</h3>
+                    <p>Create staff accounts with restricted permissions. Staff can sell products but cannot view costs, profits, or modify inventory.</p>
+                </div>
+                <div class="feature-card reveal reveal-delay-3">
+                    <div class="feature-icon" style="background: linear-gradient(135deg, rgba(239,68,68,0.1), rgba(239,68,68,0.05)); color: #EF4444;">
+                        <i class="fa-solid fa-file-csv"></i>
+                    </div>
+                    <h3>CSV Export & Reports</h3>
+                    <p>Download daily, weekly, or monthly reports as CSV files. Filter by date range, payment method, or staff member.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Roles & How It Works Section -->
+    <section id="roles" class="section" style="background-color: #F8FAFC;">
+        <div class="container">
+            <div class="section-header reveal">
+                <h2>Two Portals, One Platform</h2>
+                <p>Strict role-based access ensures your business data stays safe and organized.</p>
+            </div>
+
+            <div class="grid-2">
+                <!-- Admin Role -->
+                <div class="role-card reveal reveal-delay-1">
+                    <div class="d-flex align-center gap-3" style="margin-bottom: 1rem;">
+                        <div class="role-icon-wrap role-icon-admin"><i class="fa-solid fa-user-tie"></i></div>
+                        <div>
+                            <h3 style="margin: 0;">Admin Portal</h3>
+                            <span style="font-size: 0.85rem; color: #10B981; font-weight: 600;">Full Control</span>
+                        </div>
+                    </div>
+                    <p style="color: #64748B; margin-bottom: 1rem;">The centralized command center for business owners and managers.</p>
+                    <ul>
+                        <li><i class="fa-solid fa-check"></i> Full product and category management</li>
+                        <li><i class="fa-solid fa-check"></i> Track profit margins and revenue analytics</li>
+                        <li><i class="fa-solid fa-check"></i> Generate date-filtered CSV reports</li>
+                        <li><i class="fa-solid fa-check"></i> Create and manage staff accounts</li>
+                        <li><i class="fa-solid fa-check"></i> Configure business settings and currency</li>
+                    </ul>
+                    <a href="register.html" class="btn btn-primary" style="margin-top: 1.5rem; width: 100%;"><i class="fa-solid fa-arrow-right"></i> Create Business Account</a>
+                </div>
+
+                <!-- Staff Role -->
+                <div class="role-card reveal reveal-delay-2">
+                    <div class="d-flex align-center gap-3" style="margin-bottom: 1rem;">
+                        <div class="role-icon-wrap role-icon-staff"><i class="fa-solid fa-users"></i></div>
+                        <div>
+                            <h3 style="margin: 0;">Staff Portal</h3>
+                            <span style="font-size: 0.85rem; color: #3B82F6; font-weight: 600;">Restricted Access</span>
+                        </div>
+                    </div>
+                    <p style="color: #64748B; margin-bottom: 1rem;">A fast, focused sales interface built for shop-floor efficiency.</p>
+                    <ul>
+                        <li><i class="fa-solid fa-check"></i> Record multi-product sales instantly</li>
+                        <li><i class="fa-solid fa-check"></i> View product prices and stock levels</li>
+                        <li><i class="fa-solid fa-check"></i> Print and reprint customer receipts</li>
+                        <li><i class="fa-solid fa-check"></i> Cannot view costs, profits, or reports</li>
+                        <li><i class="fa-solid fa-check"></i> Cannot edit products or adjust stock</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- About Us Section -->
+    <section id="about" class="section">
+        <div class="container">
+            <div class="grid-2" style="align-items: center;">
+                <div class="reveal reveal-delay-1">
+                    <h2 style="font-size: 2.5rem; font-weight: 800; margin-bottom: 1rem; color: #0F172A; letter-spacing: -0.03em;">Empowering Small Businesses Globally</h2>
+                    <p style="color: #64748B; font-size: 1.1rem; line-height: 1.7; margin-bottom: 1.5rem;">CoreInventory was born out of a simple observation: small businesses across emerging markets desperately need powerful, enterprise-grade tools without the enterprise price tag.</p>
+                    <p style="color: #64748B; font-size: 1.1rem; line-height: 1.7; margin-bottom: 2rem;">Our mission is to democratize business management by providing a secure, cloud-based platform that handles the heavy lifting of inventory and sales tracking, letting you focus on what really matters—growing your business profitably.</p>
+                    <div style="display: flex; align-items: center; gap: 1rem;">
+                        <div style="background: #F1F5F9; width: 50px; height: 50px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 800; color: #10B981; border: 1px solid #E2E8F0;">CI</div>
+                        <div>
+                            <div style="font-weight: 700; color: #0F172A;">The Core Inventory Team</div>
+                            <div style="font-size: 0.85rem; color: #64748B;">Built for you.</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="about-image reveal reveal-delay-2" style="background: linear-gradient(135deg, #F8FAFC, #E2E8F0); border-radius: 20px; min-height: 400px; display: flex; align-items: center; justify-content: center; position: relative; overflow: hidden; box-shadow: inset 0 0 50px rgba(0,0,0,0.02); border: 1px solid #E2E8F0;">
+                    <i class="fa-solid fa-chart-pie" style="font-size: 10rem; color: #CBD5E1; opacity: 0.6;"></i>
+                    <div style="position: absolute; bottom: 2rem; left: 2rem; right: 2rem; background: rgba(255,255,255,0.9); padding: 1.5rem; border-radius: 12px; box-shadow: 0 10px 30px -10px rgba(0,0,0,0.1); backdrop-filter: blur(10px);">
+                        <div style="display: flex; align-items: center; gap: 1.25rem;">
+                            <div style="width: 44px; height: 44px; border-radius: 10px; background: linear-gradient(135deg, #10B981, #059669); display: flex; align-items: center; justify-content: center;">
+                                <i class="fa-solid fa-shield-halved" style="color: white; font-size: 1.2rem;"></i>
+                            </div>
+                            <div>
+                                <div style="font-size: 1rem; font-weight: 700; color: #0F172A;">Enterprise-Grade Security</div>
+                                <div style="font-size: 0.8rem; color: #64748B; margin-top: 0.15rem;">Row-Level Security &bull; End-to-End Encryption</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Contact Us Section -->
+    <section id="contact" class="section" style="background-color: #F8FAFC;">
+        <div class="container">
+            <div class="section-header reveal">
+                <h2>Get In Touch</h2>
+                <p>Have questions? We're here to help you revolutionize your business.</p>
+            </div>
+            
+            <div class="grid-2">
+                <div class="contact-info reveal reveal-delay-1" style="display: flex; flex-direction: column; justify-content: center;">
+                    <div style="background: #FFFFFF; padding: 2rem; border-radius: 16px; border: 1px solid #E2E8F0; margin-bottom: 1.5rem; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.02); transition: transform 0.2s ease;">
+                        <div style="color: #10B981; font-size: 1.8rem; margin-bottom: 1rem;"><i class="fa-solid fa-envelope-open-text"></i></div>
+                        <h4 style="font-size: 1.25rem; color: #0F172A; margin-bottom: 0.5rem; font-weight: 700;">Email Support</h4>
+                        <p style="color: #64748B; font-size: 0.95rem;">support@coreinventory.com</p>
+                        <p style="color: #94A3B8; font-size: 0.85rem; margin-top: 0.5rem;">We reply within 24 hours.</p>
+                    </div>
+                    <div style="background: #FFFFFF; padding: 2rem; border-radius: 16px; border: 1px solid #E2E8F0; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.02); transition: transform 0.2s ease;">
+                        <div style="color: #3B82F6; font-size: 1.8rem; margin-bottom: 1rem;"><i class="fa-solid fa-headset"></i></div>
+                        <h4 style="font-size: 1.25rem; color: #0F172A; margin-bottom: 0.5rem; font-weight: 700;">Sales Inquiries</h4>
+                        <p style="color: #64748B; font-size: 0.95rem;">+237 682 68 53 64</p>
+                        <p style="color: #94A3B8; font-size: 0.85rem; margin-top: 0.5rem;">Mon-Fri from 8am to 5pm.</p>
+                    </div>
+                </div>
+                
+                <div class="contact-form-wrap reveal reveal-delay-2" style="background: #FFFFFF; padding: 3.5rem 3rem; border-radius: 20px; box-shadow: 0 25px 50px -12px rgba(15, 23, 42, 0.08); border: 1px solid #E2E8F0;">
+                    <h3 style="font-size: 1.5rem; margin-bottom: 1.5rem; color: #0F172A;">Send a Message</h3>
+                    <form onsubmit="event.preventDefault(); alert('Message Sent Successfully! We will respond shortly.');">
+                        <div class="form-group" style="margin-bottom: 1.25rem;">
+                            <label style="display: block; font-size: 0.85rem; font-weight: 600; color: #475569; margin-bottom: 0.5rem;">Full Name</label>
+                            <input type="text" required placeholder="John Doe" style="width: 100%; padding: 0.85rem 1rem; border: 1px solid #CBD5E1; border-radius: 8px; outline: none; transition: border-color 0.2s; font-family: inherit;">
+                        </div>
+                        <div class="form-group" style="margin-bottom: 1.25rem;">
+                            <label style="display: block; font-size: 0.85rem; font-weight: 600; color: #475569; margin-bottom: 0.5rem;">Email Address</label>
+                            <input type="email" required placeholder="john@example.com" style="width: 100%; padding: 0.85rem 1rem; border: 1px solid #CBD5E1; border-radius: 8px; outline: none; transition: border-color 0.2s; font-family: inherit;">
+                        </div>
+                        <div class="form-group" style="margin-bottom: 2rem;">
+                            <label style="display: block; font-size: 0.85rem; font-weight: 600; color: #475569; margin-bottom: 0.5rem;">Message</label>
+                            <textarea required placeholder="How can we help your business?" rows="4" style="width: 100%; padding: 0.85rem 1rem; border: 1px solid #CBD5E1; border-radius: 8px; outline: none; resize: vertical; transition: border-color 0.2s; font-family: inherit;"></textarea>
+                        </div>
+                        <button type="submit" class="btn btn-primary" style="width: 100%; padding: 1rem; font-size: 1rem; border-radius: 8px; display: flex; justify-content: center;"><i class="fa-solid fa-paper-plane"></i> Send Message</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <div class="footer-grid">
+                <div>
+                    <h3 class="logo footer-logo"><i class="fa-solid fa-store"></i> CoreInventory</h3>
+                    <p class="footer-text">The ultimate inventory management system designed for small businesses across Africa and beyond. Manage smarter, sell faster, grow bigger.</p>
+                </div>
+                <div class="footer-links">
+                    <h4>Platform</h4>
+                    <ul>
+                        <li><a href="#features">Features</a></li>
+                        <li><a href="#roles">How It Works</a></li>
+                        <li><a href="#about">About Us</a></li>
+                        <li><a href="#contact">Contact</a></li>
+                        <li><a href="register.html">Register</a></li>
+                    </ul>
+                </div>
+                <div class="footer-links">
+                    <h4>Support</h4>
+                    <ul>
+                        <li><a href="security.html">Security</a></li>
+                        <li><a href="privacy.html">Privacy Policy</a></li>
+                        <li><a href="terms.html">Terms of Service</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="copyright">
+                &copy; 2026 CoreInventory. All rights reserved.
+            </div>
+        </div>
+    </footer>
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="js/supabase-config.js"></script>
+    <script src="js/route-guard.js"></script>
+
+    <!-- Scroll Reveal Script -->
+    <script>
+        const reveals = document.querySelectorAll('.reveal');
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                }
+            });
+        }, { threshold: 0.15 });
+        reveals.forEach(el => observer.observe(el));
+
+        // Number Counting Animation
+        const counters = document.querySelectorAll('.count-up');
+        const duration = 2000;
+        const countObserver = new IntersectionObserver((entries, obs) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    const target = +entry.target.getAttribute('data-target');
+                    const startTime = performance.now();
+                    const updateCount = (currentTime) => {
+                        const progress = Math.min((currentTime - startTime) / duration, 1);
+                        const easeOut = 1 - Math.pow(1 - progress, 3);
+                        entry.target.innerText = Math.floor(easeOut * target).toLocaleString();
+                        
+                        if (progress < 1) requestAnimationFrame(updateCount);
+                        else entry.target.innerText = target.toLocaleString();
+                    };
+                    requestAnimationFrame(updateCount);
+                    obs.unobserve(entry.target);
+                }
+            });
+        }, { threshold: 0.5 });
+        counters.forEach(counter => countObserver.observe(counter));
+    </script>
+</body>
+</html>

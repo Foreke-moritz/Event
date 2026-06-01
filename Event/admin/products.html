@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Products List - Admin</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="../css/style.css">
+    <link rel="stylesheet" href="../css/responsive.css">
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <style>
+        .filter-bar { display: flex; gap: 1rem; margin-bottom: 1.5rem; flex-wrap: wrap; }
+        .filter-bar input, .filter-bar select { min-width: 200px; flex: 1; }
+        .prod-img { width: 40px; height: 40px; border-radius: var(--border-radius); object-fit: cover; background: var(--bg-color); display: flex; align-items: center; justify-content: center; font-size: 0.75rem; color: var(--text-muted); }
+    </style>
+</head>
+<body>
+    <div class="app-container">
+        <!-- Sidebar -->
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <i class="fa-solid fa-store"></i> <span id="sidebarBizName">CoreInventory</span>
+            </div>
+            <nav class="sidebar-nav">
+                <a href="dashboard.html" class="nav-item"><i class="fa-solid fa-chart-pie"></i> Dashboard</a>
+                <a href="products.html" class="nav-item active"><i class="fa-solid fa-box-open"></i> Products</a>
+                <a href="categories.html" class="nav-item"><i class="fa-solid fa-tags"></i> Categories</a>
+                <a href="stock.html" class="nav-item"><i class="fa-solid fa-boxes-stacked"></i> Stock Management</a>
+                <a href="sales.html" class="nav-item"><i class="fa-solid fa-cart-shopping"></i> Sales</a>
+                <a href="reports.html" class="nav-item"><i class="fa-solid fa-chart-line"></i> Reports</a>
+                <a href="users.html" class="nav-item"><i class="fa-solid fa-users"></i> Staff Users</a>
+                <a href="settings.html" class="nav-item"><i class="fa-solid fa-gear"></i> Settings</a>
+                <a href="#" onclick="handleLogout()" class="nav-item" style="color: var(--danger); margin-top: 2rem;"><i class="fa-solid fa-sign-out-alt"></i> Logout</a>
+            </nav>
+        </aside>
+
+        <main class="main-content">
+            <header class="topbar">
+                <div class="d-flex align-center gap-3">
+                    <button class="sidebar-toggle" id="sidebarToggle"><i class="fa-solid fa-bars"></i></button>
+                    <h2 class="page-title">Product Catalog</h2>
+                </div>
+                <div class="user-menu">
+                    <button class="btn btn-primary" onclick="window.location.href='#modalProduct'"><i class="fa-solid fa-plus"></i> Add Product</button>
+                </div>
+            </header>
+
+            <div class="content-area">
+                <div class="card">
+                    <div class="filter-bar">
+                        <input type="text" id="searchInput" class="form-control" placeholder="Search by name, SKU, barcode...">
+                        <select id="catFilter" class="form-control"><option value="all">All Categories</option></select>
+                        <select id="stockFilter" class="form-control">
+                            <option value="all">All Stock Status</option>
+                            <option value="in">In Stock</option>
+                            <option value="low">Low Stock</option>
+                            <option value="out">Out of Stock</option>
+                            <option value="expired">Near Expiry</option>
+                        </select>
+                    </div>
+
+                    <div class="table-container">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Image</th>
+                                    <th>Product Details</th>
+                                    <th>Category</th>
+                                    <th>Cost / Selling</th>
+                                    <th>Quantity</th>
+                                    <th>Status</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="productTbody">
+                                <tr><td colspan="7" style="text-align:center;"><span class="spinner"></span> Loading products...</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Product Modal natively handled using CSS target pseudo-class or JS toggle -->
+    <div class="modal-overlay" id="modalProduct" style="display: none; align-items:flex-start; overflow-y:auto; padding:2rem 1rem;">
+        <div class="modal-content" style="max-width: 800px; margin: 2rem auto;">
+            <div class="d-flex justify-between align-center" style="margin-bottom: 1.5rem;">
+                <h3 id="modalTitle">Add New Product</h3>
+                <button type="button" class="btn btn-outline" id="closeModal" style="padding: 0.5rem;"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            
+            <form id="productForm">
+                <input type="hidden" id="pId">
+                <div class="grid-2" style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                    <div class="form-group">
+                        <label class="form-label">Product Name <span style="color:var(--danger)">*</span></label>
+                        <input type="text" id="pName" class="form-control" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Category</label>
+                        <select id="pCategory" class="form-control"></select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">SKU</label>
+                        <input type="text" id="pSku" class="form-control">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Barcode</label>
+                        <input type="text" id="pBarcode" class="form-control">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Cost Price (<span class="currency-label">FCFA</span>)</label>
+                        <input type="number" id="pCost" class="form-control" min="0" step="0.01">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Selling Price (<span class="currency-label">FCFA</span>) <span style="color:var(--danger)">*</span></label>
+                        <input type="number" id="pSelling" class="form-control" required min="0" step="0.01">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Initial Quantity <span style="color:var(--danger)">*</span></label>
+                        <input type="number" id="pQty" class="form-control" required min="0" value="0">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Low Stock Limit</label>
+                        <input type="number" id="pLimit" class="form-control" value="5">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Supplier Name</label>
+                        <input type="text" id="pSupplier" class="form-control">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Supplier Contact</label>
+                        <input type="text" id="pContact" class="form-control">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Expiry Date</label>
+                        <input type="date" id="pExpiry" class="form-control">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Image URL</label>
+                        <input type="url" id="pImage" class="form-control" placeholder="https://...">
+                    </div>
+                </div>
+
+                <div class="form-group" style="margin-top: 1rem;">
+                    <label class="form-label">Description</label>
+                    <textarea id="pDesc" class="form-control" rows="2"></textarea>
+                </div>
+                
+                <div class="d-flex justify-between align-center" style="margin-top: 2rem;">
+                    <div style="font-size: 0.875rem; color: var(--text-muted);">
+                        <input type="checkbox" id="pActive" checked> Is Active
+                    </div>
+                    <button type="submit" class="btn btn-primary" id="saveProductBtn">Save Product</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Delete Confirmation Modal -->
+    <div class="modal-overlay" id="modalDelete">
+        <div class="modal-content" style="max-width: 400px; text-align: center;">
+            <i class="fa-solid fa-triangle-exclamation" style="font-size: 3rem; color: var(--danger); margin-bottom: 1rem;"></i>
+            <h3>Delete Product?</h3>
+            <p style="color: var(--text-muted); margin: 1rem 0;">This action cannot be undone. All associated ledger entries will be orphaned.</p>
+            <input type="hidden" id="delProdId">
+            <div class="d-flex gap-2" style="justify-content: center; margin-top: 1.5rem;">
+                <button class="btn btn-outline" id="cancelDel">Cancel</button>
+                <button class="btn btn-danger" id="confirmDel">Delete</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="../js/supabase-config.js"></script>
+    <script src="../js/utils.js"></script>
+    <script src="../js/route-guard.js"></script>
+    <script src="../js/auth.js"></script>
+    <script src="../js/admin-products.js"></script>
+    <script>
+        document.getElementById('sidebarToggle').addEventListener('click', () => {
+            document.getElementById('sidebar').classList.toggle('show');
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Categories - Admin</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="../css/style.css">
+    <link rel="stylesheet" href="../css/responsive.css">
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+</head>
+<body>
+    <div class="app-container">
+        <!-- Sidebar -->
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <i class="fa-solid fa-store"></i> <span id="sidebarBizName">CoreInventory</span>
+            </div>
+            <nav class="sidebar-nav">
+                <a href="dashboard.html" class="nav-item"><i class="fa-solid fa-chart-pie"></i> Dashboard</a>
+                <a href="products.html" class="nav-item"><i class="fa-solid fa-box-open"></i> Products</a>
+                <a href="categories.html" class="nav-item active"><i class="fa-solid fa-tags"></i> Categories</a>
+                <a href="stock.html" class="nav-item"><i class="fa-solid fa-boxes-stacked"></i> Stock Management</a>
+                <a href="sales.html" class="nav-item"><i class="fa-solid fa-cart-shopping"></i> Sales</a>
+                <a href="reports.html" class="nav-item"><i class="fa-solid fa-chart-line"></i> Reports</a>
+                <a href="users.html" class="nav-item"><i class="fa-solid fa-users"></i> Staff Users</a>
+                <a href="settings.html" class="nav-item"><i class="fa-solid fa-gear"></i> Settings</a>
+                <a href="#" onclick="handleLogout()" class="nav-item" style="color: var(--danger); margin-top: 2rem;"><i class="fa-solid fa-sign-out-alt"></i> Logout</a>
+            </nav>
+        </aside>
+
+        <main class="main-content">
+            <header class="topbar">
+                <div class="d-flex align-center gap-3">
+                    <button class="sidebar-toggle" id="sidebarToggle"><i class="fa-solid fa-bars"></i></button>
+                    <h2 class="page-title">Categories Management</h2>
+                </div>
+            </header>
+
+            <div class="content-area">
+                <div class="dashboard-grid">
+                    <!-- Form Array -->
+                    <div class="card" style="align-self: flex-start;">
+                        <h3 style="margin-bottom: 1.5rem;" id="formTitle">Add Category</h3>
+                        <form id="catForm">
+                            <input type="hidden" id="cId">
+                            <div class="form-group">
+                                <label class="form-label">Category Name <span style="color:red">*</span></label>
+                                <input type="text" id="cName" class="form-control" required placeholder="e.g. Beverages">
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Description</label>
+                                <textarea id="cDesc" class="form-control" rows="3" placeholder="Additional details..."></textarea>
+                            </div>
+                            <div class="d-flex gap-2">
+                                <button type="submit" class="btn btn-primary" id="saveCatBtn" style="flex:1">Save Category</button>
+                                <button type="button" class="btn btn-outline" id="clearBtn" style="display:none;">Cancel</button>
+                            </div>
+                        </form>
+                    </div>
+
+                    <!-- Table View Native -->
+                    <div class="card">
+                        <div class="table-container">
+                            <table>
+                                <thead><tr><th>Category Name</th><th>Description</th><th>Products Count</th><th>Actions</th></tr></thead>
+                                <tbody id="catTbody">
+                                    <tr><td colspan="4" style="text-align:center;"><span class="spinner"></span> Loading categories...</td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- JS bindings -->
+    <script src="../js/supabase-config.js"></script>
+    <script src="../js/utils.js"></script>
+    <script src="../js/route-guard.js"></script>
+    <script src="../js/auth.js"></script>
+    <script>
+        document.getElementById('sidebarToggle').addEventListener('click', () => {
+            document.getElementById('sidebar').classList.toggle('show');
+        });
+
+        // Lightweight Category Executions
+        document.addEventListener('DOMContentLoaded', async () => {
+            if(!window.supabase) return;
+            const { data: { user } } = await supabase.auth.getUser();
+            if(!user) return;
+
+            let catCore = [];
+
+            async function fetchData() {
+                // Fetch categories explicitly pulling relational count dynamically mapping natively avoiding complex dual logic
+                const { data, error } = await supabase.from('categories').select('id, name, description, products(count)').order('name');
+                if(error) { Utils.showToast("Failed loading categories", "error"); return; }
+                catCore = data || [];
+                renderTable();
+            }
+
+            function renderTable() {
+                const tbody = document.getElementById('catTbody');
+                if(catCore.length === 0) { tbody.innerHTML = '<tr><td colspan="4" style="text-align:center;">No categories exist. Add one!</td></tr>'; return; }
+                
+                tbody.innerHTML = catCore.map(c => `
+                    <tr>
+                        <td style="font-weight: 500;">${c.name}</td>
+                        <td style="color: var(--text-muted);">${c.description || '-'}</td>
+                        <td style="font-weight: 600; color: var(--primary-color);">${c.products[0].count}</td>
+                        <td>
+                            <div class="d-flex gap-2">
+                                <button class="btn btn-outline" style="padding: 0.3rem" onclick="editCat('${c.id}')"><i class="fa-solid fa-pen"></i></button>
+                                <button class="btn btn-outline" style="padding: 0.3rem; color: var(--danger);" onclick="deleteCat('${c.id}')"><i class="fa-solid fa-trash"></i></button>
+                            </div>
+                        </td>
+                    </tr>
+                `).join('');
+            }
+
+            document.getElementById('catForm').addEventListener('submit', async (e) => {
+                e.preventDefault();
+                const id = document.getElementById('cId').value;
+                const name = document.getElementById('cName').value.trim();
+                const desc = document.getElementById('cDesc').value.trim();
+                const btn = document.getElementById('saveCatBtn');
+                
+                btn.disabled = true; btn.innerHTML = '<span class="spinner"></span>';
+                
+                const payload = { admin_id: user.id, name, description: desc };
+                
+                let res;
+                if(id) res = await supabase.from('categories').update(payload).eq('id', id);
+                else res = await supabase.from('categories').insert([payload]);
+                
+                if(res.error) Utils.showToast(res.error.message, "error");
+                else { Utils.showToast("Category Saved!", "success"); resetForm(); fetchData(); }
+                
+                btn.disabled = false; btn.innerHTML = 'Save Category';
+            });
+
+            window.editCat = (id) => {
+                const cat = catCore.find(c => c.id === id);
+                if(!cat) return;
+                document.getElementById('cId').value = cat.id;
+                document.getElementById('cName').value = cat.name;
+                document.getElementById('cDesc').value = cat.description || '';
+                document.getElementById('formTitle').textContent = 'Edit Category';
+                document.getElementById('clearBtn').style.display = 'block';
+            };
+
+            window.deleteCat = async (id) => {
+                if(!confirm("Delete this category? Products within it will lose their category association.")) return;
+                const { error } = await supabase.from('categories').delete().eq('id', id);
+                if(error) Utils.showToast(error.message, "error");
+                else { Utils.showToast("Category deleted.", "success"); fetchData(); }
+            };
+
+            document.getElementById('clearBtn').addEventListener('click', resetForm);
+            function resetForm() {
+                document.getElementById('catForm').reset();
+                document.getElementById('cId').value = '';
+                document.getElementById('formTitle').textContent = 'Add Category';
+                document.getElementById('clearBtn').style.display = 'none';
+            }
+
+            fetchData();
+        });
+    </script>
+</body>
+</html>

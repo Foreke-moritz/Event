@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Products List - Staff</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="../css/style.css">
+    <link rel="stylesheet" href="../css/responsive.css">
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <style>
+        .filter-bar { display: flex; gap: 1rem; margin-bottom: 1.5rem; flex-wrap: wrap; }
+        .filter-bar input, .filter-bar select { min-width: 200px; flex: 1; }
+        .prod-img { width: 40px; height: 40px; border-radius: var(--border-radius); object-fit: cover; background: var(--bg-color); display: flex; align-items: center; justify-content: center; font-size: 0.75rem; color: var(--text-muted); }
+    </style>
+</head>
+<body>
+    <div class="app-container">
+        <!-- Sidebar -->
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <i class="fa-solid fa-store"></i> <span id="sidebarBizName">CoreInventory</span>
+            </div>
+            <nav class="sidebar-nav">
+                <a href="dashboard.html" class="nav-item"><i class="fa-solid fa-chart-pie"></i> Dashboard</a>
+                <a href="products.html" class="nav-item active"><i class="fa-solid fa-box-open"></i> View Products</a>
+                <a href="sales.html" class="nav-item"><i class="fa-solid fa-cart-arrow-down"></i> Record Sale</a>
+                <a href="receipts.html" class="nav-item"><i class="fa-solid fa-receipt"></i> Receipts</a>
+                <a href="profile.html" class="nav-item"><i class="fa-solid fa-user-circle"></i> Profile</a>
+                <a href="#" onclick="handleLogout()" class="nav-item" style="color: var(--danger); margin-top: 2rem;"><i class="fa-solid fa-sign-out-alt"></i> Logout</a>
+            </nav>
+        </aside>
+
+        <main class="main-content">
+            <header class="topbar">
+                <div class="d-flex align-center gap-3">
+                    <button class="sidebar-toggle" id="sidebarToggle"><i class="fa-solid fa-bars"></i></button>
+                    <h2 class="page-title">Catalog Inventory</h2>
+                </div>
+            </header>
+
+            <div class="content-area">
+                <div class="card">
+                    <div class="filter-bar">
+                        <input type="text" id="searchInput" class="form-control" placeholder="Search by name, SKU, barcode...">
+                        <select id="catFilter" class="form-control"><option value="all">All Categories</option></select>
+                    </div>
+
+                    <div class="table-container">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Image</th>
+                                    <th>Product Identity</th>
+                                    <th>Category</th>
+                                    <th>Selling Price</th>
+                                    <th>Qty Left</th>
+                                    <th>Stock Tracker</th>
+                                </tr>
+                            </thead>
+                            <tbody id="productTbody">
+                                <tr><td colspan="6" style="text-align:center;"><span class="spinner"></span> Loading limits securely...</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script src="../js/supabase-config.js"></script>
+    <script src="../js/utils.js"></script>
+    <script src="../js/route-guard.js"></script>
+    <script src="../js/auth.js"></script>
+    <script src="../js/user-products.js"></script>
+    <script>
+        document.getElementById('sidebarToggle').addEventListener('click', () => {
+            document.getElementById('sidebar').classList.toggle('show');
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Privacy Policy - CoreInventory</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="css/style.css">
+    <style>
+        body { background: #F8FAFC; }
+        .page-hero { background: linear-gradient(135deg, #0F172A 0%, #1E293B 100%); padding: 4rem 0; text-align: center; color: white; position: relative; overflow: hidden; }
+        .page-hero h1 { font-size: 2.75rem; font-weight: 800; margin-bottom: 0.75rem; letter-spacing: -0.03em; }
+        .page-hero p { color: #94A3B8; font-size: 1.1rem; max-width: 600px; margin: 0 auto; }
+        .page-hero .back-link { position: absolute; top: 2rem; left: 2.5rem; color: #94A3B8; text-decoration: none; display: flex; align-items: center; gap: 0.5rem; font-size: 0.95rem; font-weight: 500; transition: color 0.2s; }
+        .page-hero .back-link:hover { color: #FFFFFF; }
+        .content-section { max-width: 800px; margin: 3rem auto; padding: 0 1.5rem; }
+        .content-card { background: #FFFFFF; border-radius: 16px; padding: 2.5rem; border: 1px solid #E2E8F0; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.02); margin-bottom: 2rem; }
+        .content-card h2 { font-size: 1.5rem; font-weight: 700; color: #0F172A; margin-bottom: 1rem; display: flex; align-items: center; gap: 0.75rem; }
+        .content-card h2 i { color: #10B981; font-size: 1.25rem; }
+        .content-card p, .content-card li { color: #475569; line-height: 1.8; margin-bottom: 0.75rem; }
+        .content-card ul { padding-left: 1.5rem; }
+        .effective-date { text-align: center; color: #64748B; font-size: 0.9rem; margin-bottom: 2rem; }
+        .page-footer { text-align: center; padding: 2rem; color: #94A3B8; font-size: 0.85rem; }
+        .page-footer a { color: #10B981; text-decoration: none; font-weight: 600; }
+
+        /* Animations */
+        @keyframes fadeInDown { from { opacity: 0; transform: translateY(-30px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes fadeInUp { from { opacity: 0; transform: translateY(40px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes scaleIn { from { opacity: 0; transform: scale(0.8); } to { opacity: 1; transform: scale(1); } }
+        .page-hero .container { animation: fadeInDown 0.8s ease-out; }
+        .page-hero .back-link { animation: fadeInDown 0.6s ease-out 0.2s both; }
+        .effective-date { animation: fadeInUp 0.5s ease-out 0.3s both; }
+        .content-card { opacity: 0; transform: translateY(40px); transition: all 0.6s cubic-bezier(0.16, 1, 0.3, 1); }
+        .content-card.visible { opacity: 1; transform: translateY(0); }
+        .content-card:hover { transform: translateY(-4px); box-shadow: 0 12px 24px -4px rgba(0,0,0,0.08); }
+        .content-card:nth-child(1) { transition-delay: 0s; }
+        .content-card:nth-child(2) { transition-delay: 0.1s; }
+        .content-card:nth-child(3) { transition-delay: 0.2s; }
+        .content-card:nth-child(4) { transition-delay: 0.3s; }
+        .content-card:nth-child(5) { transition-delay: 0.4s; }
+        .content-card:nth-child(6) { transition-delay: 0.5s; }
+        .page-hero i { animation: scaleIn 0.6s ease-out 0.3s both; }
+        .page-footer { animation: fadeInUp 0.5s ease-out 0.5s both; }
+    </style>
+</head>
+<body>
+    <div class="page-hero">
+        <a href="index.html" class="back-link"><i class="fa-solid fa-arrow-left"></i> Back to Home</a>
+        <div class="container">
+            <i class="fa-solid fa-eye-slash" style="font-size: 3rem; color: #10B981; margin-bottom: 1.5rem;"></i>
+            <h1>Privacy Policy</h1>
+            <p>We value your privacy and are committed to protecting your personal information.</p>
+        </div>
+    </div>
+
+    <p class="effective-date">Effective Date: June 1, 2026</p>
+
+    <div class="content-section">
+        <div class="content-card">
+            <h2><i class="fa-solid fa-file-lines"></i> 1. Information We Collect</h2>
+            <p>When you register and use CoreInventory, we collect the following information:</p>
+            <ul>
+                <li><strong>Account Information:</strong> Your name, email address, and business name provided during registration.</li>
+                <li><strong>Business Data:</strong> Products, categories, stock levels, sales records, and staff accounts you create within the platform.</li>
+                <li><strong>Usage Data:</strong> Login timestamps, pages visited, and feature usage patterns to improve service quality.</li>
+            </ul>
+        </div>
+
+        <div class="content-card">
+            <h2><i class="fa-solid fa-hand"></i> 2. How We Use Your Information</h2>
+            <p>Your information is used exclusively for the following purposes:</p>
+            <ul>
+                <li>Providing and maintaining the CoreInventory platform and its features</li>
+                <li>Authenticating your identity and managing your account</li>
+                <li>Generating reports and analytics within your business dashboard</li>
+                <li>Sending critical account notifications (password resets, security alerts)</li>
+                <li>Improving our services based on aggregated, anonymized usage patterns</li>
+            </ul>
+        </div>
+
+        <div class="content-card">
+            <h2><i class="fa-solid fa-share-nodes"></i> 3. Data Sharing</h2>
+            <p>CoreInventory does <strong>not</strong> sell, rent, or share your personal or business data with third parties for marketing purposes.</p>
+            <p>We may share data only in the following limited circumstances:</p>
+            <ul>
+                <li><strong>Service Providers:</strong> We use Supabase for database hosting and authentication. They act as a data processor under strict security agreements.</li>
+                <li><strong>Legal Requirements:</strong> If required by law, court order, or governmental regulation.</li>
+            </ul>
+        </div>
+
+        <div class="content-card">
+            <h2><i class="fa-solid fa-database"></i> 4. Data Storage & Security</h2>
+            <p>All data is stored on secure, encrypted servers managed by Supabase (built on AWS infrastructure). We employ:</p>
+            <ul>
+                <li>HTTPS/TLS encryption for all data in transit</li>
+                <li>Encrypted database storage for data at rest</li>
+                <li>Row-Level Security (RLS) to isolate each business's data</li>
+                <li>Automated daily backups with point-in-time recovery</li>
+            </ul>
+        </div>
+
+        <div class="content-card">
+            <h2><i class="fa-solid fa-user-gear"></i> 5. Your Rights</h2>
+            <p>You have the following rights regarding your data:</p>
+            <ul>
+                <li><strong>Access:</strong> Request a copy of your stored personal data at any time.</li>
+                <li><strong>Correction:</strong> Update or correct inaccurate information via your account settings.</li>
+                <li><strong>Deletion:</strong> Request complete deletion of your account and all associated data.</li>
+                <li><strong>Portability:</strong> Export your business data (products, sales, reports) in CSV format.</li>
+            </ul>
+        </div>
+
+        <div class="content-card">
+            <h2><i class="fa-solid fa-envelope"></i> 6. Contact Us</h2>
+            <p>If you have any questions about this Privacy Policy or your data, contact us at:</p>
+            <p><strong>Email:</strong> support@coreinventory.com</p>
+            <p><strong>Phone:</strong> +237 682 68 53 64</p>
+        </div>
+    </div>
+
+    <div class="page-footer">
+        <p>&copy; 2026 CoreInventory. All rights reserved. | <a href="index.html">Back to Home</a></p>
+    </div>
+
+    <script>
+        const cards = document.querySelectorAll('.content-card');
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) entry.target.classList.add('visible');
+            });
+        }, { threshold: 0.1 });
+        cards.forEach(card => observer.observe(card));
+    </script>
+</body>
+</html>

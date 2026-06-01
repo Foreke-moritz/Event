@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard - CoreInventory</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="../css/style.css">
+    <link rel="stylesheet" href="../css/responsive.css">
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <style>
+        .metric-cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 1.5rem; margin-bottom: 2rem; }
+        .metric { background: var(--card-bg); padding: 1.5rem; border-radius: var(--border-radius-lg); border-left: 4px solid var(--primary-color); box-shadow: var(--shadow-sm); }
+        .metric h4 { color: var(--text-muted); font-size: 0.875rem; margin-bottom: 0.5rem; font-weight: 500; }
+        .metric .val { font-size: 1.75rem; font-weight: 700; color: var(--text-main); }
+        .metric .icon { float: right; font-size: 2rem; color: rgba(16, 185, 129, 0.15); }
+        
+        .quick-actions { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 1rem; margin-bottom: 2rem; }
+        .action-btn { padding: 1rem; background: var(--card-bg); border: 1px solid var(--border-color); border-radius: var(--border-radius); text-align: center; color: var(--primary-color); font-weight: 600; cursor: pointer; transition: all 0.2s; }
+        .action-btn:hover { background: var(--primary-color); color: white; transform: translateY(-2px); box-shadow: var(--shadow-sm); }
+        .action-btn i { display: block; font-size: 1.5rem; margin-bottom: 0.5rem; }
+
+        .dashboard-grid { display: grid; grid-template-columns: 2fr 1fr; gap: 2rem; }
+        @media (max-width: 992px) { .dashboard-grid { grid-template-columns: 1fr; } }
+    </style>
+</head>
+<body>
+    <div class="app-container">
+        <!-- Sidebar -->
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <i class="fa-solid fa-store"></i> <span id="sidebarBizName">CoreInventory</span>
+            </div>
+            <nav class="sidebar-nav">
+                <a href="dashboard.html" class="nav-item active"><i class="fa-solid fa-chart-pie"></i> Dashboard</a>
+                <a href="products.html" class="nav-item"><i class="fa-solid fa-box-open"></i> Products</a>
+                <a href="categories.html" class="nav-item"><i class="fa-solid fa-tags"></i> Categories</a>
+                <a href="stock.html" class="nav-item"><i class="fa-solid fa-boxes-stacked"></i> Stock Management</a>
+                <a href="sales.html" class="nav-item"><i class="fa-solid fa-cart-shopping"></i> Sales</a>
+                <a href="reports.html" class="nav-item"><i class="fa-solid fa-chart-line"></i> Reports</a>
+                <a href="users.html" class="nav-item"><i class="fa-solid fa-users"></i> Staff Users</a>
+                <a href="settings.html" class="nav-item"><i class="fa-solid fa-gear"></i> Settings</a>
+                <a href="#" onclick="handleLogout()" class="nav-item" style="color: var(--danger); margin-top: 2rem;"><i class="fa-solid fa-sign-out-alt"></i> Logout</a>
+            </nav>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <header class="topbar">
+                <div class="d-flex align-center gap-3">
+                    <button class="sidebar-toggle" id="sidebarToggle"><i class="fa-solid fa-bars"></i></button>
+                    <h2 class="page-title">Admin Dashboard</h2>
+                </div>
+                <div class="user-menu">
+                    <div class="d-flex flex-column" style="text-align: right;">
+                        <span id="topUserName" style="font-weight: 600; font-size: 0.875rem;">Loading...</span>
+                        <span id="topUserRole" class="badge badge-success" style="font-size: 0.7rem; align-self: flex-end;">Admin</span>
+                    </div>
+                    <div class="avatar" id="avatarDisplay">A</div>
+                </div>
+            </header>
+
+            <div class="content-area">
+                
+                <div class="quick-actions">
+                    <div class="action-btn" onclick="window.location.href='products.html'"><i class="fa-solid fa-plus"></i> Add Product</div>
+                    <div class="action-btn" onclick="window.location.href='sales.html'"><i class="fa-solid fa-cash-register"></i> Record Sale</div>
+                    <div class="action-btn" onclick="window.location.href='users.html'"><i class="fa-solid fa-user-plus"></i> Add Staff</div>
+                    <div class="action-btn" onclick="window.location.href='reports.html'"><i class="fa-solid fa-chart-bar"></i> View Reports</div>
+                </div>
+
+                <div class="metric-cards" id="topMetrics">
+                    <div class="metric"><i class="fa-solid fa-box-open icon"></i><h4>Total Products</h4><div class="val"><span class="spinner"></span></div></div>
+                    <div class="metric" style="border-color: var(--info)"><i class="fa-solid fa-cubes icon"></i><h4>Total Stock</h4><div class="val"><span class="spinner"></span></div></div>
+                    <div class="metric" style="border-color: var(--success)"><i class="fa-solid fa-sack-dollar icon"></i><h4>Total Sales</h4><div class="val"><span class="spinner"></span></div></div>
+                    <div class="metric" style="border-color: var(--success)"><i class="fa-solid fa-piggy-bank icon"></i><h4>Total Profit</h4><div class="val"><span class="spinner"></span></div></div>
+                </div>
+                <div class="metric-cards" id="bottomMetrics">
+                    <div class="metric"><i class="fa-solid fa-calendar-day icon"></i><h4>Today's Sales</h4><div class="val"><span class="spinner"></span></div></div>
+                    <div class="metric"><i class="fa-solid fa-calendar-days icon"></i><h4>This Month's Sales</h4><div class="val"><span class="spinner"></span></div></div>
+                    <div class="metric" style="border-color: var(--warning)"><i class="fa-solid fa-triangle-exclamation icon"></i><h4>Low Stock</h4><div class="val"><span class="spinner"></span></div></div>
+                    <div class="metric" style="border-color: var(--danger)"><i class="fa-solid fa-circle-exclamation icon"></i><h4>Out of Stock</h4><div class="val"><span class="spinner"></span></div></div>
+                    <div class="metric" style="border-color: var(--info)"><i class="fa-solid fa-user-tie icon"></i><h4>Staff Users</h4><div class="val"><span class="spinner"></span></div></div>
+                </div>
+
+                <div class="dashboard-grid">
+                    <div class="card">
+                        <h3 style="margin-bottom: 1rem; border-bottom: 1px solid var(--border-color); padding-bottom: 0.5rem;">Recent Sales</h3>
+                        <div class="table-container">
+                            <table>
+                                <thead><tr><th>Receipt</th><th>Staff</th><th>Total</th><th>Date</th></tr></thead>
+                                <tbody id="recentSalesTbody">
+                                    <tr><td colspan="4" style="text-align:center;">Loading recent transactions...</td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    
+                    <div class="card">
+                        <h3 style="margin-bottom: 1rem; border-bottom: 1px solid var(--border-color); padding-bottom: 0.5rem; color: var(--danger);">Critical Alerts</h3>
+                        <div id="alertsContainer">
+                            <div style="text-align:center; padding: 2rem; color: var(--text-muted);"><span class="spinner"></span></div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </main>
+    </div>
+
+    <script src="../js/supabase-config.js"></script>
+    <script src="../js/utils.js"></script>
+    <script src="../js/route-guard.js"></script>
+    <script src="../js/auth.js"></script>
+    <script src="../js/admin-dashboard.js"></script>
+    <script>
+        document.getElementById('sidebarToggle').addEventListener('click', () => {
+            document.getElementById('sidebar').classList.toggle('show');
+        });
+    </script>
+</body>
+</html>

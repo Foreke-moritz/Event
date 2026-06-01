@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Receipts Ledger - Staff</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="../css/style.css">
+    <link rel="stylesheet" href="../css/responsive.css">
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <style>
+        .filter-bar { display: flex; gap: 1rem; margin-bottom: 1.5rem; flex-wrap: wrap; }
+        .filter-bar input { flex: 1; min-width: 150px; }
+        .receipt { max-width: 350px; background: white; margin: 0 auto; font-family: monospace; color: black; line-height: 1.4; padding: 1.5rem; box-shadow: 0 0 10px rgba(0,0,0,0.1); }
+        .receipt-header { border-bottom: 1px dashed black; padding-bottom: 0.5rem; margin-bottom: 0.5rem; text-align: center; }
+        .receipt-item { display: flex; justify-content: space-between; font-size: 0.9rem; }
+        .receipt-total { border-top: 1px dashed black; padding-top: 0.5rem; margin-top: 0.5rem; font-weight: bold; font-size: 1.1rem; }
+        @media print {
+            body * { visibility: hidden; }
+            .app-container, .modal-overlay { display: none !important; }
+            #printableReceipt, #printableReceipt * { visibility: visible; }
+            #printableReceipt { position: absolute; left: 0; top: 0; width: 100%; padding: 0; margin: 0; box-shadow: none; border: none; text-align: left;}
+        }
+    </style>
+</head>
+<body>
+    <div class="app-container">
+        <!-- Sidebar -->
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <i class="fa-solid fa-store"></i> <span id="sidebarBizName">CoreInventory</span>
+            </div>
+            <nav class="sidebar-nav">
+                <a href="dashboard.html" class="nav-item"><i class="fa-solid fa-chart-pie"></i> Dashboard</a>
+                <a href="products.html" class="nav-item"><i class="fa-solid fa-box-open"></i> View Products</a>
+                <a href="sales.html" class="nav-item"><i class="fa-solid fa-cart-arrow-down"></i> Record Sale</a>
+                <a href="receipts.html" class="nav-item active"><i class="fa-solid fa-receipt"></i> Receipts</a>
+                <a href="profile.html" class="nav-item"><i class="fa-solid fa-user-circle"></i> Profile</a>
+                <a href="#" onclick="handleLogout()" class="nav-item" style="color: var(--danger); margin-top: 2rem;"><i class="fa-solid fa-sign-out-alt"></i> Logout</a>
+            </nav>
+        </aside>
+
+        <main class="main-content">
+            <header class="topbar">
+                <div class="d-flex align-center gap-3">
+                    <button class="sidebar-toggle" id="sidebarToggle"><i class="fa-solid fa-bars"></i></button>
+                    <h2 class="page-title">Personal Transaction Ledger</h2>
+                </div>
+            </header>
+
+            <div class="content-area">
+                <div class="card">
+                    <div class="filter-bar">
+                        <input type="text" id="sQuery" class="form-control" placeholder="Search Receipt Number...">
+                        <input type="date" id="sDate" class="form-control">
+                        <button class="btn btn-outline" id="btnSearch"><i class="fa-solid fa-magnifying-glass"></i> Search</button>
+                    </div>
+
+                    <div class="table-container">
+                        <table>
+                            <thead>
+                                <tr><th>Receipt Code</th><th>Timestamp</th><th>Customer</th><th>Method</th><th>Total Auth</th><th>Reprint</th></tr>
+                            </thead>
+                            <tbody id="receiptsTbody">
+                                <tr><td colspan="6" style="text-align:center;"><span class="spinner"></span> Querying Postgres Arrays...</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Printable Receipt Native Modal Injection -->
+    <div class="modal-overlay" id="receiptModal" style="display:none;">
+        <div class="modal-content" style="max-width: 450px;">
+            <div id="printableReceipt" class="receipt">
+                <!-- DOM constructs inherently inside JS -->
+            </div>
+            <div class="d-flex gap-2 justify-between" style="margin-top: 2rem;">
+                <button class="btn btn-outline" id="closeReceipt" onclick="document.getElementById('receiptModal').style.display='none'">Close Drawer</button>
+                <button class="btn btn-primary" onclick="window.print()"><i class="fa-solid fa-print"></i> Pull Thermal Slip</button>
+            </div>
+        </div>
+    </div>
+
+
+    <script src="../js/supabase-config.js"></script>
+    <script src="../js/utils.js"></script>
+    <script src="../js/route-guard.js"></script>
+    <script src="../js/auth.js"></script>
+    <script src="../js/user-receipts.js"></script>
+    <script>
+        document.getElementById('sidebarToggle').addEventListener('click', () => {
+            document.getElementById('sidebar').classList.toggle('show');
+        });
+    </script>
+</body>
+</html>

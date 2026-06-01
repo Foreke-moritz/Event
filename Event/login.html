@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - Business Management System</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="css/style.css">
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <style>
+        body { min-height: 100vh; background: linear-gradient(135deg, #0F172A 0%, #1E293B 100%); display: flex; align-items: center; justify-content: center; padding: 2rem; }
+        .auth-wrapper { display: flex; flex-direction: column; align-items: center; gap: 2rem; width: 100%; max-width: 440px; }
+        .auth-brand { text-align: center; color: white; }
+        .auth-brand i { font-size: 2.5rem; color: #10B981; margin-bottom: 0.75rem; }
+        .auth-brand h2 { font-size: 1.75rem; font-weight: 800; letter-spacing: -0.025em; }
+        .auth-brand p { color: #94A3B8; font-size: 0.9rem; margin-top: 0.5rem; }
+        .auth-container { width: 100%; padding: 2.5rem; background: #FFFFFF; border-radius: 16px; box-shadow: 0 25px 50px -12px rgba(0,0,0,0.25); }
+        .auth-container h3 { font-size: 1.25rem; color: #0F172A; margin-bottom: 0.25rem; }
+        .auth-container .subtitle { color: #64748B; font-size: 0.875rem; margin-bottom: 2rem; }
+        .auth-links { text-align: center; margin-top: 1.5rem; font-size: 0.875rem; color: #64748B; }
+        .auth-links a { color: #10B981; font-weight: 600; }
+        .auth-links a:hover { text-decoration: underline; }
+    </style>
+</head>
+<body>
+    <a href="index.html" style="position: absolute; top: 2rem; left: 2.5rem; color: #94A3B8; font-size: 0.95rem; font-weight: 500; text-decoration: none; display: flex; align-items: center; gap: 0.5rem; transition: color 0.2s; z-index: 10;">
+        <i class="fa-solid fa-arrow-left"></i> Back to Main
+    </a>
+    <div class="auth-wrapper">
+        <div class="auth-brand">
+            <i class="fa-solid fa-store"></i>
+            <h2>CoreInventory</h2>
+            <p>Small Business Management System</p>
+        </div>
+
+        <div class="auth-container">
+            <h3>Welcome Back</h3>
+            <p class="subtitle">Sign in to manage your business operations</p>
+
+            <form id="loginForm">
+                <div class="form-group">
+                    <label class="form-label" for="lEmail">Email Address</label>
+                    <input type="email" id="lEmail" class="form-control" placeholder="admin@business.com" required>
+                </div>
+                
+                <div class="form-group">
+                    <div class="d-flex justify-between">
+                        <label class="form-label" for="lPassword">Password</label>
+                        <a href="forgot-password.html" style="font-size: 0.8rem; color: #10B981; font-weight: 500;">Forgot Password?</a>
+                    </div>
+                    <input type="password" id="lPassword" class="form-control" placeholder="••••••••" required>
+                </div>
+
+                <button type="submit" class="btn btn-primary" id="btnLogin" style="width: 100%; justify-content: center; padding: 0.85rem; font-size: 1rem;">
+                    <i class="fa-solid fa-right-to-bracket"></i> Sign In
+                </button>
+            </form>
+
+            <div class="auth-links">
+                Don't have an admin account? <a href="register.html">Register Business</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="js/supabase-config.js"></script>
+    <script src="js/utils.js"></script>
+    <script src="js/route-guard.js"></script>
+    <script src="js/auth.js"></script>
+</body>
+</html>

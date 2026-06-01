@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Staff Management - Admin</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="../css/style.css">
+    <link rel="stylesheet" href="../css/responsive.css">
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+</head>
+<body>
+    <div class="app-container">
+        <!-- Sidebar -->
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <i class="fa-solid fa-store"></i> <span id="sidebarBizName">CoreInventory</span>
+            </div>
+            <nav class="sidebar-nav">
+                <a href="dashboard.html" class="nav-item"><i class="fa-solid fa-chart-pie"></i> Dashboard</a>
+                <a href="products.html" class="nav-item"><i class="fa-solid fa-box-open"></i> Products</a>
+                <a href="categories.html" class="nav-item"><i class="fa-solid fa-tags"></i> Categories</a>
+                <a href="stock.html" class="nav-item"><i class="fa-solid fa-boxes-stacked"></i> Stock Management</a>
+                <a href="sales.html" class="nav-item"><i class="fa-solid fa-cart-shopping"></i> Sales</a>
+                <a href="reports.html" class="nav-item"><i class="fa-solid fa-chart-line"></i> Reports</a>
+                <a href="users.html" class="nav-item active"><i class="fa-solid fa-users"></i> Staff Users</a>
+                <a href="settings.html" class="nav-item"><i class="fa-solid fa-gear"></i> Settings</a>
+                <a href="#" onclick="handleLogout()" class="nav-item" style="color: var(--danger); margin-top: 2rem;"><i class="fa-solid fa-sign-out-alt"></i> Logout</a>
+            </nav>
+        </aside>
+
+        <main class="main-content">
+            <header class="topbar">
+                <div class="d-flex align-center gap-3">
+                    <button class="sidebar-toggle" id="sidebarToggle"><i class="fa-solid fa-bars"></i></button>
+                    <h2 class="page-title">Staff Management</h2>
+                </div>
+            </header>
+
+            <div class="content-area">
+                
+                <div class="card" style="background: rgba(16, 185, 129, 0.05); border: 1px solid var(--primary-color); margin-bottom: 2rem;">
+                    <div class="d-flex align-center justify-between">
+                        <div>
+                            <h3 style="color: var(--primary-color); margin-bottom: 0.5rem;"><i class="fa-solid fa-shield-halved"></i> Add New Staff Profile</h3>
+                            <p style="color: var(--text-muted); font-size: 0.875rem;">Generate secure internal access points. Staff generated here cannot access this Admin board natively.</p>
+                        </div>
+                        <button class="btn btn-primary" onclick="window.location.href='#modalStaff'"><i class="fa-solid fa-user-plus"></i> Create Account</button>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <h3 style="margin-bottom: 1rem;">Active Subordinate Profiles</h3>
+                    <div class="table-container">
+                        <table>
+                            <thead><tr><th>Full Name</th><th>Contact Ledger</th><th>Status</th><th>Sales Captured</th><th>Actions</th></tr></thead>
+                            <tbody id="staffTbody">
+                                <tr><td colspan="5" style="text-align:center;"><span class="spinner"></span> Resolving profiles...</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+            </div>
+        </main>
+    </div>
+
+    <!-- Staff Creation Modal -->
+    <div class="modal-overlay" id="modalStaff" style="display: none;">
+        <div class="modal-content" style="max-width: 500px;">
+            <div class="d-flex justify-between align-center" style="margin-bottom: 1.5rem;">
+                <h3>Register Internal User</h3>
+                <a href="#" class="btn btn-outline" style="padding: 0.5rem;" onclick="document.getElementById('modalStaff').style.display='none'"><i class="fa-solid fa-xmark"></i></a>
+            </div>
+            
+            <div style="background: rgba(239, 68, 68, 0.1); border-left: 3px solid var(--danger); padding: 1rem; font-size: 0.85rem; margin-bottom: 1.5rem; color: var(--danger);">
+                <b>Security Notice:</b> Due to native Auth encapsulation, creating a staff member explicitly will execute via REST, requiring you to momentarily authenticate them natively.
+            </div>
+
+            <form id="staffForm">
+                <div class="form-group">
+                    <label class="form-label">Full Name <span style="color:red">*</span></label>
+                    <input type="text" id="sName" class="form-control" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Email Address (Login ID) <span style="color:red">*</span></label>
+                    <input type="email" id="sEmail" class="form-control" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Phone Number</label>
+                    <input type="tel" id="sPhone" class="form-control">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Initial Password <span style="color:red">*</span></label>
+                    <input type="text" id="sPass" class="form-control" required minlength="6" placeholder="Must be 6+ chars">
+                </div>
+                <button type="submit" class="btn btn-primary" id="btnSaveStaff" style="width:100%; margin-top: 1rem;">Execute Profile Registration</button>
+            </form>
+        </div>
+    </div>
+
+
+    <script src="../js/supabase-config.js"></script>
+    <script src="../js/utils.js"></script>
+    <script src="../js/route-guard.js"></script>
+    <script src="../js/auth.js"></script>
+    <script src="../js/admin-users.js"></script>
+    <script>
+        document.getElementById('sidebarToggle').addEventListener('click', () => {
+            document.getElementById('sidebar').classList.toggle('show');
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Staff Profile - CoreInventory</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="../css/style.css">
+    <link rel="stylesheet" href="../css/responsive.css">
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+</head>
+<body>
+    <div class="app-container">
+        <!-- Sidebar -->
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <i class="fa-solid fa-store"></i> <span id="sidebarBizName">CoreInventory</span>
+            </div>
+            <nav class="sidebar-nav">
+                <a href="dashboard.html" class="nav-item"><i class="fa-solid fa-chart-pie"></i> Dashboard</a>
+                <a href="products.html" class="nav-item"><i class="fa-solid fa-box-open"></i> View Products</a>
+                <a href="sales.html" class="nav-item"><i class="fa-solid fa-cart-arrow-down"></i> Record Sale</a>
+                <a href="receipts.html" class="nav-item"><i class="fa-solid fa-receipt"></i> Receipts</a>
+                <a href="profile.html" class="nav-item active"><i class="fa-solid fa-user-circle"></i> Profile</a>
+                <a href="#" onclick="handleLogout()" class="nav-item" style="color: var(--danger); margin-top: 2rem;"><i class="fa-solid fa-sign-out-alt"></i> Logout</a>
+            </nav>
+        </aside>
+
+        <main class="main-content">
+            <header class="topbar">
+                <div class="d-flex align-center gap-3">
+                    <button class="sidebar-toggle" id="sidebarToggle"><i class="fa-solid fa-bars"></i></button>
+                    <h2 class="page-title">Personal Authentification Profile</h2>
+                </div>
+            </header>
+
+            <div class="content-area">
+                <div class="dashboard-grid">
+                    <div class="card" style="align-self: flex-start;">
+                        <h3 style="margin-bottom: 1.5rem;"><i class="fa-solid fa-address-card"></i> Operator Configurations</h3>
+                        <form id="profileForm">
+                            <div class="form-group">
+                                <label class="form-label">Full Name (Locked by Admin)</label>
+                                <input type="text" id="pName" class="form-control" disabled style="background:#f1f5f9;">
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Attached Business Subsystem</label>
+                                <input type="text" id="pBiz" class="form-control" disabled style="background:#f1f5f9;">
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Active Contact Phone Array</label>
+                                <input type="tel" id="pPhone" class="form-control" required>
+                            </div>
+                            <button type="submit" class="btn btn-primary" id="btnSavePro" style="margin-top: 1rem;"><i class="fa-solid fa-check-double"></i> Upsert Mutable Profile</button>
+                        </form>
+                    </div>
+
+                    <div class="card" style="align-self: flex-start; border-top: 3px solid var(--danger);">
+                        <h3 style="margin-bottom: 1.5rem; color: var(--danger);"><i class="fa-solid fa-key"></i> Key Rotation Matrix</h3>
+                        <form id="passForm">
+                            <div class="form-group">
+                                <label class="form-label">Construct New Password String</label>
+                                <input type="password" id="pPass" class="form-control" required minlength="6">
+                            </div>
+                            <button type="submit" class="btn btn-danger" id="btnSavePas"><i class="fa-solid fa-lock"></i> Overwrite Active Key Auth</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- JS bindings -->
+    <script src="../js/supabase-config.js"></script>
+    <script src="../js/utils.js"></script>
+    <script src="../js/route-guard.js"></script>
+    <script src="../js/auth.js"></script>
+    <script src="../js/user-profile.js"></script>
+    <script>
+        document.getElementById('sidebarToggle').addEventListener('click', () => {
+            document.getElementById('sidebar').classList.toggle('show');
+        });
+    </script>
+</body>
+</html>

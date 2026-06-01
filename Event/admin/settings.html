@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Settings - Admin</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="../css/style.css">
+    <link rel="stylesheet" href="../css/responsive.css">
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+</head>
+<body>
+    <div class="app-container">
+        <!-- Sidebar -->
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <i class="fa-solid fa-store"></i> <span id="sidebarBizName">CoreInventory</span>
+            </div>
+            <nav class="sidebar-nav">
+                <a href="dashboard.html" class="nav-item"><i class="fa-solid fa-chart-pie"></i> Dashboard</a>
+                <a href="products.html" class="nav-item"><i class="fa-solid fa-box-open"></i> Products</a>
+                <a href="categories.html" class="nav-item"><i class="fa-solid fa-tags"></i> Categories</a>
+                <a href="stock.html" class="nav-item"><i class="fa-solid fa-boxes-stacked"></i> Stock Management</a>
+                <a href="sales.html" class="nav-item"><i class="fa-solid fa-cart-shopping"></i> Sales</a>
+                <a href="reports.html" class="nav-item"><i class="fa-solid fa-chart-line"></i> Reports</a>
+                <a href="users.html" class="nav-item"><i class="fa-solid fa-users"></i> Staff Users</a>
+                <a href="settings.html" class="nav-item active"><i class="fa-solid fa-gear"></i> Settings</a>
+                <a href="#" onclick="handleLogout()" class="nav-item" style="color: var(--danger); margin-top: 2rem;"><i class="fa-solid fa-sign-out-alt"></i> Logout</a>
+            </nav>
+        </aside>
+
+        <main class="main-content">
+            <header class="topbar">
+                <div class="d-flex align-center gap-3">
+                    <button class="sidebar-toggle" id="sidebarToggle"><i class="fa-solid fa-bars"></i></button>
+                    <h2 class="page-title">Business Settings Configuration</h2>
+                </div>
+            </header>
+
+            <div class="content-area">
+                <div class="dashboard-grid">
+                    
+                    <div class="card" style="align-self: flex-start;">
+                        <h3 style="margin-bottom: 1.5rem;"><i class="fa-solid fa-building"></i> Company Information</h3>
+                        <form id="setForm">
+                            <div class="form-group">
+                                <label class="form-label">Enterprise Name</label>
+                                <input type="text" id="bName" class="form-control" required>
+                            </div>
+                            <div class="grid-2" style="display:grid; grid-template-columns:1fr 1fr; gap:1rem;">
+                                <div class="form-group">
+                                    <label class="form-label">Base Currency Symbol</label>
+                                    <input type="text" id="bCurr" class="form-control" placeholder="FCFA" value="FCFA">
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">Tax Rate (%)</label>
+                                    <input type="number" id="bTax" class="form-control" min="0" step="0.1" value="0">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Global Low Stock Alert Boundary (Items)</label>
+                                <input type="number" id="bLimit" class="form-control" value="5">
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Contact Phone</label>
+                                <input type="tel" id="bPhone" class="form-control">
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Public Email</label>
+                                <input type="email" id="bEmail" class="form-control">
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Physical Address</label>
+                                <textarea id="bAddr" class="form-control" rows="2"></textarea>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Receipt Footer Message</label>
+                                <input type="text" id="bFoot" class="form-control" placeholder="Thank you for shopping securely with us!">
+                            </div>
+
+                            <button type="submit" class="btn btn-primary" id="btnSetSave" style="margin-top: 1rem;"><i class="fa-solid fa-save"></i> Execute Synchronization</button>
+                        </form>
+                    </div>
+
+                    <div class="card" style="background: rgba(15, 23, 42, 0.03); border: 1px solid var(--primary-color);">
+                        <h3 style="margin-bottom: 1rem; color: var(--primary-color);"><i class="fa-solid fa-circle-info"></i> Security Parameters Native Architecture</h3>
+                        <p style="color: var(--text-muted); font-size: 0.95rem; line-height: 1.6;">Your records are currently encrypted locally directly binding into PostgreSQL through Supabase Row Level Security protocols dynamically mapped accurately restricting access per Staff UUID limits globally securely!</p>
+                        <p style="color: var(--text-muted); font-size: 0.95rem; line-height: 1.6; margin-top:1rem;">To update Owner passwords or destructive limits, kindly formulate queries natively bypassing front-end limits directly securely within your Supabase console dashboard natively explicitly.</p>
+                    </div>
+
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Scripts -->
+    <script src="../js/supabase-config.js"></script>
+    <script src="../js/utils.js"></script>
+    <script src="../js/route-guard.js"></script>
+    <script src="../js/auth.js"></script>
+    <script src="../js/admin-settings.js"></script>
+    <script>
+        document.getElementById('sidebarToggle').addEventListener('click', () => {
+            document.getElementById('sidebar').classList.toggle('show');
+        });
+    </script>
+</body>
+</html>

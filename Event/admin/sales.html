@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sales POS - Admin</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="../css/style.css">
+    <link rel="stylesheet" href="../css/responsive.css">
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <style>
+        .tabs { display: flex; gap: 1rem; border-bottom: 2px solid var(--border-color); margin-bottom: 1.5rem; }
+        .tab-btn { background: none; border: none; padding: 0.75rem 1rem; font-weight: 500; color: var(--text-muted); cursor: pointer; border-bottom: 2px solid transparent; margin-bottom: -2px; }
+        .tab-btn.active { color: var(--primary-color); border-bottom-color: var(--primary-color); font-weight: 600; }
+        .tab-pane { display: none; }
+        .tab-pane.active { display: block; }
+
+        .cart-table th { padding: 0.5rem; font-size: 0.8rem; }
+        .cart-table td { padding: 0.5rem; }
+        .pos-grid { display: grid; grid-template-columns: 2fr 1fr; gap: 2rem; }
+        
+        .receipt { max-width: 350px; background: white; margin: 0 auto; font-family: monospace; color: black; line-height: 1.4; padding: 1.5rem; box-shadow: 0 0 10px rgba(0,0,0,0.1); }
+        .receipt-header { border-bottom: 1px dashed black; padding-bottom: 0.5rem; margin-bottom: 0.5rem; text-align: center; }
+        .receipt-item { display: flex; justify-content: space-between; font-size: 0.9rem; }
+        .receipt-total { border-top: 1px dashed black; padding-top: 0.5rem; margin-top: 0.5rem; font-weight: bold; font-size: 1.1rem; }
+
+        @media (max-width: 992px) { .pos-grid { grid-template-columns: 1fr; } }
+        @media print {
+            body * { visibility: hidden; }
+            .sidebar, .topbar, .pos-grid { display: none !important; }
+            #printableReceipt, #printableReceipt * { visibility: visible; }
+            #printableReceipt { position: absolute; left: 0; top: 0; width: 100%; padding: 0; margin: 0; box-shadow: none; border: none; text-align: left;}
+        }
+    </style>
+</head>
+<body>
+    <div class="app-container">
+        <!-- Sidebar -->
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <i class="fa-solid fa-store"></i> <span id="sidebarBizName">CoreInventory</span>
+            </div>
+            <nav class="sidebar-nav">
+                <a href="dashboard.html" class="nav-item"><i class="fa-solid fa-chart-pie"></i> Dashboard</a>
+                <a href="products.html" class="nav-item"><i class="fa-solid fa-box-open"></i> Products</a>
+                <a href="categories.html" class="nav-item"><i class="fa-solid fa-tags"></i> Categories</a>
+                <a href="stock.html" class="nav-item"><i class="fa-solid fa-boxes-stacked"></i> Stock Management</a>
+                <a href="sales.html" class="nav-item active"><i class="fa-solid fa-cart-shopping"></i> Sales</a>
+                <a href="reports.html" class="nav-item"><i class="fa-solid fa-chart-line"></i> Reports</a>
+                <a href="users.html" class="nav-item"><i class="fa-solid fa-users"></i> Staff Users</a>
+                <a href="settings.html" class="nav-item"><i class="fa-solid fa-gear"></i> Settings</a>
+                <a href="#" onclick="handleLogout()" class="nav-item" style="color: var(--danger); margin-top: 2rem;"><i class="fa-solid fa-sign-out-alt"></i> Logout</a>
+            </nav>
+        </aside>
+
+        <main class="main-content">
+            <header class="topbar">
+                <div class="d-flex align-center gap-3">
+                    <button class="sidebar-toggle" id="sidebarToggle"><i class="fa-solid fa-bars"></i></button>
+                    <h2 class="page-title">Point of Sale</h2>
+                </div>
+            </header>
+
+            <div class="content-area">
+                <div class="tabs">
+                    <button class="tab-btn active" onclick="switchTab('tabPOS')"><i class="fa-solid fa-cash-register"></i> Terminal</button>
+                    <button class="tab-btn" onclick="switchTab('tabHistory')"><i class="fa-solid fa-clock-rotate-left"></i> Sales History</button>
+                </div>
+
+                <!-- POS TERMINAL -->
+                <div id="tabPOS" class="tab-pane active">
+                    <div class="pos-grid">
+                        <!-- Product Selection -->
+                        <div class="card">
+                            <div class="form-group d-flex gap-2">
+                                <select id="posProduct" class="form-control" style="flex:2;"><option value="">Search Product...</option></select>
+                                <input type="number" id="posQty" class="form-control" value="1" min="1" style="flex:1;">
+                                <button class="btn btn-outline" id="posAddBtn"><i class="fa-solid fa-plus"></i></button>
+                            </div>
+                            
+                            <h3 style="margin: 1.5rem 0 0.5rem; font-size: 1rem; color:var(--text-muted);">Current Cart</h3>
+                            <div class="table-container" style="max-height: 400px; overflow-y: auto; border: 1px solid var(--border-color); border-radius: var(--border-radius);">
+                                <table class="cart-table">
+                                    <thead style="position: sticky; top: 0;">
+                                        <tr><th>Item</th><th>Qty</th><th>Price</th><th>Total</th><th></th></tr>
+                                    </thead>
+                                    <tbody id="cartTbody">
+                                        <tr><td colspan="5" style="text-align:center; padding: 2rem; color:var(--text-muted);">No items in cart.</td></tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+
+                        <!-- Checkout Details -->
+                        <div class="card" style="align-self: flex-start;">
+                            <h3 style="margin-bottom: 1.5rem; border-bottom:1px solid var(--border-color); padding-bottom: 0.5rem;">Checkout Summary</h3>
+                            
+                            <div class="d-flex justify-between" style="margin-bottom: 0.5rem; color: var(--text-muted);">
+                                <span>Subtotal</span> <span id="chkSubtotal" style="font-weight:500; color:var(--text-main);">0.00</span>
+                            </div>
+                            <div class="d-flex justify-between" style="margin-bottom: 0.5rem; color: var(--text-muted);">
+                                <span>Tax/Discount</span> <span>- 0.00</span> <!-- Simplified for native mapping -->
+                            </div>
+                            <div class="d-flex justify-between" style="margin-bottom: 1.5rem; font-size: 1.5rem; font-weight: 700;">
+                                <span>Total</span> <span id="chkTotal" style="color:var(--success);">0.00</span>
+                            </div>
+
+                            <form id="checkoutForm">
+                                <div class="form-group">
+                                    <label class="form-label">Customer Name (Optional)</label>
+                                    <input type="text" id="chkCust" class="form-control">
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">Payment Method</label>
+                                    <select id="chkMethod" class="form-control" required>
+                                        <option value="Cash">Cash</option>
+                                        <option value="Mobile Money">Mobile Money</option>
+                                        <option value="Bank Transfer">Bank Transfer</option>
+                                        <option value="Credit">Credit</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">Amount Paid</label>
+                                    <input type="number" id="chkPaid" class="form-control" placeholder="Calculate change...">
+                                </div>
+                                <div style="font-size: 0.8rem; color: var(--text-muted); margin-bottom: 1rem;">
+                                    Change returning: <strong id="chkChange">0.00</strong>
+                                </div>
+                                
+                                <button type="submit" class="btn btn-primary" id="btnCheckout" style="width:100%; padding: 1rem; font-size: 1.1rem;" disabled>Complete Sale</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- SALES HISTORY TAB -->
+                <div id="tabHistory" class="tab-pane">
+                    <div class="card">
+                        <div class="table-container">
+                            <table>
+                                <thead><tr><th>Receipt</th><th>Date</th><th>Customer</th><th>Method</th><th>Total Amount</th><th>Items</th></tr></thead>
+                                <tbody id="historyTbody"><tr><td colspan="6" style="text-align:center;"><span class="spinner"></span> Loading history...</td></tr></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </main>
+    </div>
+
+    <!-- Printable Receipt Native Modal Injection -->
+    <div class="modal-overlay" id="receiptModal">
+        <div class="modal-content" style="max-width: 450px;">
+            <div id="printableReceipt" class="receipt d-none">
+                <!-- DOM constructs inherently inside JS -->
+            </div>
+            <div class="d-flex gap-2 justify-between" style="margin-top: 2rem;">
+                <button class="btn btn-outline" id="closeReceipt">Close Window</button>
+                <button class="btn btn-primary" onclick="window.print()"><i class="fa-solid fa-print"></i> Print Receipt</button>
+            </div>
+        </div>
+    </div>
+
+
+    <script src="../js/supabase-config.js"></script>
+    <script src="../js/utils.js"></script>
+    <script src="../js/route-guard.js"></script>
+    <script src="../js/auth.js"></script>
+    <script src="../js/admin-sales.js"></script>
+    <script>
+        document.getElementById('sidebarToggle').addEventListener('click', () => {
+            document.getElementById('sidebar').classList.toggle('show');
+        });
+        function switchTab(tabId) {
+            document.querySelectorAll('.tab-pane').forEach(el => el.classList.remove('active'));
+            document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
+            document.getElementById(tabId).classList.add('active');
+            event.target.classList.add('active');
+        }
+    </script>
+</body>
+</html>

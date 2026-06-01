@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sales POS - Staff - CoreInventory</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="../css/style.css">
+    <link rel="stylesheet" href="../css/responsive.css">
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <style>
+        .cart-table th { padding: 0.5rem; font-size: 0.8rem; }
+        .cart-table td { padding: 0.5rem; }
+        .pos-grid { display: grid; grid-template-columns: 2fr 1.3fr; gap: 2rem; }
+        
+        .receipt { max-width: 350px; background: white; margin: 0 auto; font-family: monospace; color: black; line-height: 1.4; padding: 1.5rem; box-shadow: 0 0 10px rgba(0,0,0,0.1); }
+        .receipt-header { border-bottom: 1px dashed black; padding-bottom: 0.5rem; margin-bottom: 0.5rem; text-align: center; }
+        .receipt-item { display: flex; justify-content: space-between; font-size: 0.9rem; }
+        .receipt-total { border-top: 1px dashed black; padding-top: 0.5rem; margin-top: 0.5rem; font-weight: bold; font-size: 1.1rem; }
+
+        @media (max-width: 992px) { .pos-grid { grid-template-columns: 1fr; } }
+        @media print {
+            body * { visibility: hidden; }
+            .app-container, .modal-overlay { display: none !important; }
+            #printableReceipt, #printableReceipt * { visibility: visible; }
+            #printableReceipt { position: absolute; left: 0; top: 0; width: 100%; padding: 0; margin: 0; box-shadow: none; border: none; text-align: left;}
+        }
+    </style>
+</head>
+<body>
+    <div class="app-container">
+        <!-- Sidebar -->
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <i class="fa-solid fa-store"></i> <span id="sidebarBizName">CoreInventory</span>
+            </div>
+            <nav class="sidebar-nav">
+                <a href="dashboard.html" class="nav-item"><i class="fa-solid fa-chart-pie"></i> Dashboard</a>
+                <a href="products.html" class="nav-item"><i class="fa-solid fa-box-open"></i> View Products</a>
+                <a href="sales.html" class="nav-item active"><i class="fa-solid fa-cart-arrow-down"></i> Record Sale</a>
+                <a href="receipts.html" class="nav-item"><i class="fa-solid fa-receipt"></i> Receipts</a>
+                <a href="profile.html" class="nav-item"><i class="fa-solid fa-user-circle"></i> Profile</a>
+                <a href="#" onclick="handleLogout()" class="nav-item" style="color: var(--danger); margin-top: 2rem;"><i class="fa-solid fa-sign-out-alt"></i> Logout</a>
+            </nav>
+        </aside>
+
+        <main class="main-content">
+            <header class="topbar">
+                <div class="d-flex align-center gap-3">
+                    <button class="sidebar-toggle" id="sidebarToggle"><i class="fa-solid fa-bars"></i></button>
+                    <h2 class="page-title">Terminals POS Interface</h2>
+                </div>
+            </header>
+
+            <div class="content-area">
+                <div class="pos-grid">
+                    
+                    <!-- Search & Table Array -->
+                    <div class="card" style="display: flex; flex-direction: column; min-height: 500px;">
+                        <h3 style="margin-bottom: 1rem;"><i class="fa-solid fa-barcode"></i> Assemble Transaction Ledger</h3>
+                        <div class="form-group d-flex gap-2">
+                            <select id="posProduct" class="form-control" style="flex:2;"><option value="">Loading Inventory Database...</option></select>
+                            <input type="number" id="posQty" class="form-control" value="1" min="1" style="flex:1;">
+                            <button class="btn btn-outline" id="posAddBtn"><i class="fa-solid fa-plus"></i> Add Item</button>
+                        </div>
+                        
+                        <div class="table-container" style="flex: 1; border: 1px solid var(--border-color); border-radius: var(--border-radius); overflow-y: auto;">
+                            <table class="cart-table">
+                                <thead style="position: sticky; top: 0; background: var(--bg-color);">
+                                    <tr><th>Product Name</th><th>Unit Size</th><th>Qty</th><th>Sum Amount</th><th></th></tr>
+                                </thead>
+                                <tbody id="cartTbody">
+                                    <tr><td colspan="5" style="text-align:center; padding: 2rem; color:var(--text-muted);">Awaiting barcoded insertions natively.</td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <!-- Explicit Checkout Execution Block -->
+                    <div class="card" style="align-self: flex-start; border-top: 4px solid var(--primary-color);">
+                        <h3 style="margin-bottom: 1.5rem; text-align:center;">Execute Order Form</h3>
+                        
+                        <!-- Financial Summary explicitly mapping dynamic changes inherently! -->
+                        <div style="background: var(--bg-color); padding: 1rem; border-radius: var(--border-radius); margin-bottom: 1.5rem;">
+                            <div class="d-flex justify-between" style="font-size:0.9rem; color:var(--text-muted); margin-bottom:0.5rem;">
+                                <span>Subtotal</span> <span id="chkSubtotal">0.00</span>
+                            </div>
+                            <!-- Implementing Requested Additions explicitly overriding basic calculations seamlessly -->
+                            <div class="d-flex justify-between align-center" style="font-size:0.9rem; color:var(--text-muted); margin-bottom:0.5rem;">
+                                <span>Discount</span>
+                                <input type="number" id="chkDiscount" class="form-control" style="width: 80px; padding: 0.2rem 0.5rem; height: auto;" value="0" min="0" step="1">
+                            </div>
+                            <div class="d-flex justify-between align-center" style="font-size:0.9rem; color:var(--text-muted); margin-bottom:1rem; border-bottom: 1px solid var(--border-color); padding-bottom:1rem;">
+                                <span>Tax <span id="taxLabelNative">(0%)</span></span> <span id="chkTaxStr">0.00</span>
+                            </div>
+                            
+                            <div class="d-flex justify-between" style="font-size: 1.7rem; font-weight: 800; color:var(--success);">
+                                <span>TOTAL</span> <span id="chkTotal">0.00</span>
+                            </div>
+                        </div>
+
+                        <form id="checkoutForm">
+                            <div class="grid-2" style="display:grid; grid-template-columns:1fr 1fr; gap:0.5rem;">
+                                <div class="form-group">
+                                    <label class="form-label" style="font-size:0.8rem;">Customer Name</label>
+                                    <input type="text" id="chkCustName" class="form-control" style="padding:0.5rem;">
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label" style="font-size:0.8rem;">Customer Phone</label>
+                                    <input type="tel" id="chkCustPhone" class="form-control" style="padding:0.5rem;">
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="form-label">Payment Method Selected <span style="color:var(--danger)">*</span></label>
+                                <select id="chkMethod" class="form-control" required style="font-weight:600;">
+                                    <option value="Cash">Cash (Physical Register)</option>
+                                    <option value="Mobile Money">Mobile Money Gateway</option>
+                                    <option value="Bank Transfer">Bank Transfer (Verified)</option>
+                                    <option value="Credit">Credit (Debt System)</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Tendered Amount</label>
+                                <div class="d-flex align-center gap-2">
+                                    <input type="number" id="chkPaid" class="form-control" style="font-size:1.1rem; font-weight:600;" placeholder="0.00">
+                                </div>
+                            </div>
+
+                            <div style="text-align: center; font-size: 0.95rem; margin-bottom: 1.5rem; background:#fff; padding: 0.5rem; border:1px dashed var(--danger); border-radius:4px;">
+                                Change Balance Executing: <strong id="chkChange" style="font-size:1.2rem; color:var(--danger); display:block;">0.00</strong>
+                            </div>
+                            
+                            <button type="submit" class="btn btn-primary" id="btnCheckout" style="width:100%; padding: 1.1rem; font-size: 1.15rem; font-weight:700; text-transform:uppercase;" disabled>Lock Transaction natively!</button>
+                        </form>
+                    </div>
+
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Printable Receipt Native Modal Injection -->
+    <div class="modal-overlay" id="receiptModal">
+        <div class="modal-content" style="max-width: 450px;">
+            <div id="printableReceipt" class="receipt d-none">
+                <!-- DOM constructs inherently inside JS -->
+            </div>
+            <div class="d-flex gap-2 justify-between" style="margin-top: 2rem;">
+                <button class="btn btn-outline" id="closeReceipt" onclick="document.getElementById('receiptModal').style.display='none'">Close Terminal Form</button>
+                <button class="btn btn-primary" onclick="window.print()"><i class="fa-solid fa-print"></i> Generate Thermal Slip</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- JS bindings -->
+    <script src="../js/supabase-config.js"></script>
+    <script src="../js/utils.js"></script>
+    <script src="../js/route-guard.js"></script>
+    <script src="../js/auth.js"></script>
+    <script src="../js/user-sales.js"></script>
+    <script>
+        document.getElementById('sidebarToggle').addEventListener('click', () => {
+            document.getElementById('sidebar').classList.toggle('show');
+        });
+    </script>
+</body>
+</html>

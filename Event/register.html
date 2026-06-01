@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Register Business - CoreInventory</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="css/style.css">
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <style>
+        body { min-height: 100vh; background: linear-gradient(135deg, #0F172A 0%, #1E293B 100%); display: flex; align-items: center; justify-content: center; padding: 2rem; }
+        .auth-wrapper { display: flex; flex-direction: column; align-items: center; gap: 2rem; width: 100%; max-width: 520px; }
+        .auth-brand { text-align: center; color: white; }
+        .auth-brand i { font-size: 2.5rem; color: #10B981; margin-bottom: 0.75rem; }
+        .auth-brand h2 { font-size: 1.75rem; font-weight: 800; letter-spacing: -0.025em; }
+        .auth-brand p { color: #94A3B8; font-size: 0.9rem; margin-top: 0.5rem; }
+        .auth-container { width: 100%; padding: 2.5rem; background: #FFFFFF; border-radius: 16px; box-shadow: 0 25px 50px -12px rgba(0,0,0,0.25); }
+        .auth-container h3 { font-size: 1.25rem; color: #0F172A; margin-bottom: 0.25rem; }
+        .auth-container .subtitle { color: #64748B; font-size: 0.875rem; margin-bottom: 2rem; }
+        .auth-links { text-align: center; margin-top: 1.5rem; font-size: 0.875rem; color: #64748B; }
+        .auth-links a { color: #10B981; font-weight: 600; }
+        .auth-links a:hover { text-decoration: underline; }
+    </style>
+</head>
+<body>
+    <a href="index.html" style="position: absolute; top: 2rem; left: 2.5rem; color: #94A3B8; font-size: 0.95rem; font-weight: 500; text-decoration: none; display: flex; align-items: center; gap: 0.5rem; transition: color 0.2s; z-index: 10;">
+        <i class="fa-solid fa-arrow-left"></i> Back to Main
+    </a>
+    <div class="auth-wrapper">
+        <div class="auth-brand">
+            <i class="fa-solid fa-store"></i>
+            <h2>CoreInventory</h2>
+            <p>Create your business management account</p>
+        </div>
+
+        <div class="auth-container">
+            <h3>Register Business</h3>
+            <p class="subtitle">Set up your Admin profile to start managing inventory and sales</p>
+
+            <form id="registerForm">
+                <div class="d-flex gap-3">
+                    <div class="form-group" style="flex:1;">
+                        <label class="form-label">Full Name</label>
+                        <input type="text" id="rFullName" class="form-control" placeholder="John Doe" required>
+                    </div>
+                    <div class="form-group" style="flex:1;">
+                        <label class="form-label">Business Name</label>
+                        <input type="text" id="rBusinessName" class="form-control" placeholder="My Shop" required>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Email Address</label>
+                    <input type="email" id="rEmail" class="form-control" placeholder="admin@business.com" required>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Phone Number</label>
+                    <input type="tel" id="rPhone" class="form-control" placeholder="+237 6XXXXXXXX" required>
+                </div>
+                
+                <div class="d-flex gap-3">
+                    <div class="form-group" style="flex:1;">
+                        <label class="form-label">Password</label>
+                        <input type="password" id="rPassword" class="form-control" placeholder="Min 6 characters" required minlength="6">
+                    </div>
+                    <div class="form-group" style="flex:1;">
+                        <label class="form-label">Confirm Password</label>
+                        <input type="password" id="rConfirmPassword" class="form-control" placeholder="Re-enter password" required minlength="6">
+                    </div>
+                </div>
+
+                <button type="submit" class="btn btn-primary" id="btnRegister" style="width: 100%; justify-content: center; padding: 0.85rem; font-size: 1rem;">
+                    <i class="fa-solid fa-user-plus"></i> Create Admin Account
+                </button>
+            </form>
+
+            <div class="auth-links">
+                Already have an account? <a href="login.html">Sign In</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="js/supabase-config.js"></script>
+    <script src="js/utils.js"></script>
+    <script src="js/route-guard.js"></script>
+    <script src="js/auth.js"></script>
+</body>
+</html>
