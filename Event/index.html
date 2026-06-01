@@ -274,23 +274,35 @@
         .reveal-delay-2 { transition-delay: 0.2s; }
         .reveal-delay-3 { transition-delay: 0.3s; }
 
-        /* ============ RESPONSIVE ============ */
-        @media (max-width: 768px) {
-            .navbar { display: flex; justify-content: space-between; padding: 1rem 0; }
-            .nav-links, .nav-auth { display: none; }
-            .hero h1 { font-size: 2.5rem; }
-            .hero p { font-size: 1rem; }
-            .grid-2 { grid-template-columns: 1fr; gap: 2rem; }
-            .footer-grid { grid-template-columns: 1fr; gap: 2rem; }
-            .hero { padding: 4rem 0 3rem; }
-            .hero-wrapper { min-height: 70vh; }
-            .stats-bar { gap: 2rem; flex-wrap: wrap; margin-top: 2.5rem; }
-            .stats-bar .stat-item { width: 45%; text-align: center; }
-            .stats-bar .stat-item .num { font-size: 1.6rem; display: block; }
-            .hero-btns { flex-direction: column; align-items: stretch; width: 100%; max-width: 320px; }
-        }
         /* Home Navigation Active State */
         .nav-links a.active { color: #10B981; font-weight: 700; }
+
+        /* Mobile Hamburger Button */
+        .mobile-menu-btn {
+            display: none; background: none; border: none; color: #FFFFFF;
+            font-size: 1.5rem; cursor: pointer; padding: 0.5rem;
+            z-index: 60;
+        }
+
+        /* Mobile Nav Overlay */
+        .mobile-nav-overlay {
+            display: none; position: fixed; inset: 0;
+            background: rgba(15, 23, 42, 0.95); backdrop-filter: blur(10px);
+            z-index: 200; flex-direction: column; align-items: center;
+            justify-content: center; gap: 2rem;
+        }
+        .mobile-nav-overlay.open { display: flex; animation: fadeIn 0.3s ease; }
+        .mobile-nav-overlay a {
+            color: #FFFFFF; font-size: 1.25rem; font-weight: 600;
+            padding: 0.75rem 2rem; text-decoration: none;
+            transition: color 0.2s;
+        }
+        .mobile-nav-overlay a:hover { color: #10B981; }
+        .mobile-nav-close {
+            position: absolute; top: 1.5rem; right: 1.5rem;
+            background: none; border: none; color: #FFFFFF;
+            font-size: 2rem; cursor: pointer;
+        }
 
         /* General Home Page Animations */
         @keyframes floating {
@@ -319,6 +331,56 @@
             0% { bottom: -100px; transform: translateX(0); opacity: 0; }
             50% { opacity: 1; }
             100% { bottom: 1000px; transform: translateX(-150px); opacity: 0; }
+        }
+
+        /* ============ LANDING PAGE RESPONSIVE ============ */
+        @media (max-width: 992px) {
+            .navbar { display: flex; justify-content: space-between; padding: 1rem 0; }
+            .nav-links, .nav-auth { display: none; }
+            .mobile-menu-btn { display: block; }
+            .grid-2 { grid-template-columns: 1fr; gap: 2rem; }
+            .grid-3 { grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 1.5rem; }
+            .footer-grid { grid-template-columns: 1fr 1fr; gap: 2rem; }
+            .section { padding: 4rem 0; }
+            .section-header h2 { font-size: 2rem; }
+            .section-header p { font-size: 1rem; }
+        }
+
+        @media (max-width: 768px) {
+            .hero h1 { font-size: 2.5rem; }
+            .hero p { font-size: 1rem; margin-bottom: 2rem; }
+            .hero { padding: 3rem 0 3rem; }
+            .hero-wrapper { min-height: auto; }
+            .hero-btns { flex-direction: column; align-items: stretch; width: 100%; max-width: 320px; }
+            .hero-btns .btn { width: 100%; text-align: center; }
+            .stats-bar { gap: 1.5rem; flex-wrap: wrap; margin-top: 2rem; padding: 1.5rem 0; }
+            .stats-bar .stat-item { width: 45%; text-align: center; }
+            .stats-bar .stat-item .num { font-size: 1.5rem; }
+            .role-card { padding: 2rem; }
+            .feature-card { padding: 1.75rem; }
+            .footer-grid { grid-template-columns: 1fr; gap: 2rem; }
+            .contact-form-wrap { padding: 2rem 1.5rem !important; }
+            .section { padding: 3rem 0; }
+            .section-header { margin-bottom: 2.5rem; }
+            .container { padding: 0 1.25rem; }
+        }
+
+        @media (max-width: 480px) {
+            .hero h1 { font-size: 2rem; }
+            .hero p { font-size: 0.9rem; }
+            .hero-badge { font-size: 0.75rem; padding: 0.4rem 1rem; }
+            .stats-bar .stat-item { width: 100%; }
+            .stats-bar .stat-item .num { font-size: 1.3rem; }
+            .section-header h2 { font-size: 1.6rem; }
+            .section-header p { font-size: 0.9rem; }
+            .feature-card { padding: 1.5rem; }
+            .feature-card h3 { font-size: 1.05rem; }
+            .role-card { padding: 1.5rem; }
+            .role-card h3 { font-size: 1.2rem; }
+            .role-card ul li { font-size: 0.85rem; }
+            footer { padding: 3rem 0 1.5rem; }
+            .container { padding: 0 1rem; }
+            .about-image { min-height: 280px !important; }
         }
     </style>
 </head>
@@ -355,7 +417,22 @@
                 <a href="login.html" class="btn nav-btn-outline">Login</a>
                 <a href="register.html" class="btn nav-btn-primary" style="background:#10B981;color:white;border:none;">Get Started</a>
             </div>
+            <button class="mobile-menu-btn" id="mobileMenuBtn" aria-label="Open Menu"><i class="fa-solid fa-bars"></i></button>
         </nav>
+
+        <!-- Mobile Navigation Overlay -->
+        <div class="mobile-nav-overlay" id="mobileNavOverlay">
+            <button class="mobile-nav-close" id="mobileNavClose" aria-label="Close Menu"><i class="fa-solid fa-xmark"></i></button>
+            <a href="index.html">Home</a>
+            <a href="#features" onclick="closeMobileNav()">Features</a>
+            <a href="#roles" onclick="closeMobileNav()">How it Works</a>
+            <a href="#about" onclick="closeMobileNav()">About</a>
+            <a href="#contact" onclick="closeMobileNav()">Contact</a>
+            <div style="display:flex; flex-direction:column; gap:1rem; margin-top:1rem; width:80%; max-width:280px;">
+                <a href="login.html" class="btn btn-outline" style="color:white;border-color:rgba(255,255,255,0.3);text-align:center;justify-content:center;">Login</a>
+                <a href="register.html" class="btn btn-primary" style="text-align:center;justify-content:center;">Get Started</a>
+            </div>
+        </div>
 
         <!-- Hero Content -->
         <header class="container hero">
@@ -646,6 +723,25 @@
             });
         }, { threshold: 0.5 });
         counters.forEach(counter => countObserver.observe(counter));
+
+        // Mobile Menu Toggle
+        const mobileMenuBtn = document.getElementById('mobileMenuBtn');
+        const mobileNavOverlay = document.getElementById('mobileNavOverlay');
+        const mobileNavClose = document.getElementById('mobileNavClose');
+        
+        if(mobileMenuBtn) {
+            mobileMenuBtn.addEventListener('click', () => {
+                mobileNavOverlay.classList.add('open');
+                document.body.style.overflow = 'hidden';
+            });
+        }
+        if(mobileNavClose) {
+            mobileNavClose.addEventListener('click', closeMobileNav);
+        }
+        function closeMobileNav() {
+            mobileNavOverlay.classList.remove('open');
+            document.body.style.overflow = '';
+        }
     </script>
 </body>
 </html>

@@ -26,6 +26,13 @@
         .receipt-total { border-top: 1px dashed black; padding-top: 0.5rem; margin-top: 0.5rem; font-weight: bold; font-size: 1.1rem; }
 
         @media (max-width: 992px) { .pos-grid { grid-template-columns: 1fr; } }
+        @media (max-width: 768px) {
+            .tabs { gap: 0.5rem; }
+            .tab-btn { padding: 0.6rem 0.75rem; font-size: 0.85rem; }
+            .pos-grid .card .form-group.d-flex { flex-direction: column; }
+            .pos-grid .card .form-group.d-flex .form-control,
+            .pos-grid .card .form-group.d-flex .btn { width: 100%; }
+        }
         @media print {
             body * { visibility: hidden; }
             .sidebar, .topbar, .pos-grid { display: none !important; }

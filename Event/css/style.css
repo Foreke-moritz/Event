@@ -631,6 +631,12 @@ table tbody tr:hover {
     .main-content { margin-left: 0; }
     .sidebar-toggle { display: block; }
     .content-area { padding: 1.5rem; }
+    .topbar .page-title {
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        max-width: 50vw;
+    }
 }
 
 html { scroll-behavior: smooth; }

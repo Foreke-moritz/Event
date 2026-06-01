@@ -1,99 +1,313 @@
-/* Enterprise Responsive Definitions - responsive.css */
+/* ============================================================
+   COMPREHENSIVE RESPONSIVE DESIGN - responsive.css
+   Breakpoints: 1200px, 992px, 768px, 576px, 480px
+   ============================================================ */
 
-/* Large Tablets and Below */
-@media (max-width: 992px) {
-    :root {
-        --sidebar-width: 220px;
-    }
+/* ============ LARGE DESKTOPS (max 1200px) ============ */
+@media (max-width: 1200px) {
+    .container { padding: 0 1.5rem; }
 }
 
-/* Tablets & Mobile */
-@media (max-width: 768px) {
+/* ============ TABLETS & SMALL DESKTOPS (max 992px) ============ */
+@media (max-width: 992px) {
+    :root {
+        --sidebar-width: 0px;
+    }
+
+    /* Sidebar becomes off-canvas overlay */
     .sidebar {
         transform: translateX(-100%);
-        box-shadow: 0 10px 15px -3px rgba(15, 23, 42, 0.2);
         width: 280px;
+        z-index: 100;
     }
     .sidebar.show {
         transform: translateX(0);
+        box-shadow: 5px 0 25px rgba(15, 23, 42, 0.3);
     }
-    
+
     .sidebar-toggle {
-        display: block;
+        display: block !important;
     }
 
     .main-content {
         margin-left: 0;
     }
 
+    /* Dashboard grids stack */
+    .dashboard-grid {
+        grid-template-columns: 1fr;
+    }
+
+    /* POS grids stack */
+    .pos-grid {
+        grid-template-columns: 1fr !important;
+    }
+
+    .content-area {
+        padding: 1.5rem;
+    }
+
+    /* Metric cards 2-column */
+    .metric-cards {
+        grid-template-columns: repeat(2, 1fr) !important;
+    }
+
+    /* Quick actions 2-column */
+    .quick-actions {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    /* Report toolbar stacks */
+    .report-toolbar {
+        flex-direction: column;
+    }
+    .report-toolbar > div {
+        min-width: 100% !important;
+    }
+}
+
+/* Sidebar backdrop overlay on mobile */
+.sidebar-backdrop {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(15, 23, 42, 0.5);
+    z-index: 99;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+.sidebar-backdrop.show {
+    display: block;
+    opacity: 1;
+}
+
+/* ============ TABLETS & MOBILE (max 768px) ============ */
+@media (max-width: 768px) {
     .topbar {
         padding: 0 1rem;
+        height: 60px;
+    }
+
+    .topbar .page-title {
+        font-size: 1.1rem;
     }
 
     .content-area {
         padding: 1.25rem;
     }
 
-    /* Stack the dashboard grid */
-    .dashboard-grid {
-        grid-template-columns: 1fr;
+    /* Cards tighter padding */
+    .card {
+        padding: 1.25rem;
     }
 
-    /* Stack all flex gap-3 items vertically */
+    /* Stack flex items vertically */
     .d-flex.gap-3 {
         flex-direction: column;
         gap: 0;
     }
 
+    /* Filter bars stack */
     .filter-bar {
         flex-direction: column;
         align-items: stretch;
     }
 
-    /* POS grids */
-    .pos-grid {
+    /* Metric cards single column */
+    .metric-cards {
         grid-template-columns: 1fr !important;
     }
 
-    /* Report toolbar */
-    .report-toolbar {
-        flex-direction: column;
+    /* Metric sizing */
+    .metric {
+        padding: 1.25rem;
+    }
+    .metric .val {
+        font-size: 1.5rem;
+    }
+    .metric .icon {
+        font-size: 2rem;
     }
 
-    /* Metric cards wrap nicely */
-    .metric-cards {
+    /* Quick actions single column */
+    .quick-actions {
+        grid-template-columns: 1fr;
+    }
+
+    /* Grid-2 inline grids stack */
+    .grid-2,
+    div[style*="grid-template-columns:1fr 1fr"],
+    div[style*="grid-template-columns: 1fr 1fr"] {
+        grid-template-columns: 1fr !important;
+    }
+
+    /* Modals full-width on mobile */
+    .modal-overlay {
+        padding: 0.75rem;
+        align-items: flex-end;
+    }
+    .modal-content {
+        max-width: 100%;
+        padding: 1.75rem;
+        border-radius: 16px 16px 0 0;
+        max-height: 90vh;
+        overflow-y: auto;
+    }
+
+    /* Tables scroll horizontally */
+    .table-container {
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+    }
+    table {
+        min-width: 500px;
+    }
+
+    /* User menu compact */
+    .user-menu {
+        gap: 0.75rem;
+    }
+    .user-menu .d-flex.flex-column {
+        display: none !important;
+    }
+
+    /* Topbar buttons stack nicely */
+    .topbar .user-menu .btn {
+        padding: 0.5rem 0.75rem;
+        font-size: 0.8rem;
+    }
+
+    /* Receipt modals */
+    .receipt {
+        max-width: 100% !important;
+        padding: 1rem !important;
+        font-size: 0.85rem;
+    }
+
+    /* Auth pages */
+    .auth-wrapper {
+        max-width: 100% !important;
+        padding: 0 0.5rem;
+    }
+    .auth-container {
+        padding: 1.75rem !important;
+    }
+
+    /* POS checkout form */
+    #checkoutForm .grid-2 {
         grid-template-columns: 1fr !important;
     }
 }
 
-/* Strict mobile constraints */
-@media (max-width: 480px) {
-    .page-title {
-        font-size: 1.1rem;
+/* ============ SMALL MOBILE (max 576px) ============ */
+@media (max-width: 576px) {
+    .topbar .page-title {
+        font-size: 1rem;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        max-width: 180px;
     }
-    
+
+    .content-area {
+        padding: 1rem;
+    }
+
     .card {
         padding: 1rem;
         border-radius: 12px;
     }
 
+    /* Buttons */
     .btn {
         padding: 0.55rem 1rem;
         font-size: 0.8rem;
     }
 
+    /* Tables */
     table th, table td {
         padding: 0.75rem 0.5rem;
         font-size: 0.8rem;
     }
 
-    /* Hide textual labels on topbar user menu for space conservation */
-    .user-menu span.desktop-only {
-        display: none;
+    /* Product images in table */
+    .prod-img {
+        width: 36px !important;
+        height: 36px !important;
     }
 
+    /* Checkout total */
+    #chkTotal {
+        font-size: 1.4rem !important;
+    }
+
+    /* Tab buttons in admin sales */
+    .tab-btn {
+        padding: 0.5rem 0.75rem !important;
+        font-size: 0.8rem !important;
+    }
+
+    /* Hero buttons on landing page */
     .hero-btns {
         flex-direction: column;
-        align-items: center;
+        align-items: stretch;
+        width: 100%;
+        max-width: 320px;
+    }
+
+    /* Stats bar compact */
+    .stats-bar {
+        gap: 1.5rem !important;
+        flex-wrap: wrap;
+        margin-top: 2rem !important;
+    }
+    .stats-bar .stat-item {
+        width: 45%;
+        text-align: center;
+    }
+    .stats-bar .stat-item .num {
+        font-size: 1.4rem !important;
+    }
+
+    /* Timeline in stock management */
+    .timeline {
+        padding-left: 1rem;
+    }
+    .timeline-item::before {
+        left: -1.35rem !important;
+    }
+}
+
+/* ============ EXTRA SMALL (max 400px) ============ */
+@media (max-width: 400px) {
+    .topbar .page-title {
+        font-size: 0.9rem;
+        max-width: 140px;
+    }
+
+    .content-area {
+        padding: 0.75rem;
+    }
+
+    .card {
+        padding: 0.85rem;
+    }
+
+    .form-control {
+        padding: 0.6rem 0.75rem;
+        font-size: 0.85rem;
+    }
+
+    .btn {
+        padding: 0.5rem 0.85rem;
+        font-size: 0.75rem;
+    }
+
+    .modal-content {
+        padding: 1.25rem;
+    }
+
+    h3 {
+        font-size: 1.05rem;
     }
 }

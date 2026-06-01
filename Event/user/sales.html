@@ -20,6 +20,11 @@
         .receipt-total { border-top: 1px dashed black; padding-top: 0.5rem; margin-top: 0.5rem; font-weight: bold; font-size: 1.1rem; }
 
         @media (max-width: 992px) { .pos-grid { grid-template-columns: 1fr; } }
+        @media (max-width: 768px) {
+            .pos-grid .card .form-group.d-flex { flex-direction: column; }
+            .pos-grid .card .form-group.d-flex .form-control,
+            .pos-grid .card .form-group.d-flex .btn { width: 100%; }
+        }
         @media print {
             body * { visibility: hidden; }
             .app-container, .modal-overlay { display: none !important; }
