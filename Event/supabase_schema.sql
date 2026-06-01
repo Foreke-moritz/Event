@@ -156,13 +156,19 @@ ALTER TABLE public.sale_items ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.business_settings ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.expenses ENABLE ROW LEVEL SECURITY;
 
+-- Function to avoid infinite recursion when querying self-referential admin_id
+CREATE OR REPLACE FUNCTION public.get_auth_user_admin_id() RETURNS uuid AS $$
+    SELECT admin_id FROM public.profiles WHERE id = auth.uid() LIMIT 1;
+$$ LANGUAGE sql SECURITY DEFINER;
+
 -- 1. Profiles Policies
 -- Admins can view profiles mapped to them or themselves. Staff can view their own profile and their Admin's profile.
 CREATE POLICY "Users can view their own profile or profiles connected to their admin"
 ON public.profiles FOR SELECT USING (
     id = auth.uid() OR 
     admin_id = auth.uid() OR 
-    (admin_id = (SELECT admin_id FROM public.profiles WHERE id = auth.uid()))
+    (admin_id = public.get_auth_user_admin_id()) OR
+    (id = public.get_auth_user_admin_id())
 );
 
 CREATE POLICY "Admins can update their own profile and their staff profiles"
@@ -285,12 +291,14 @@ CREATE TRIGGER trg_business_settings_updated_at BEFORE UPDATE ON public.business
 CREATE OR REPLACE FUNCTION public.handle_new_user() 
 RETURNS TRIGGER AS $$
 BEGIN
-    INSERT INTO public.profiles (id, full_name, business_name, role)
+    INSERT INTO public.profiles (id, full_name, business_name, role, phone, admin_id)
     VALUES (
         NEW.id, 
         COALESCE(NEW.raw_user_meta_data->>'full_name', 'New User'),
         NEW.raw_user_meta_data->>'business_name',
-        COALESCE(NEW.raw_user_meta_data->>'role', 'admin') -- If empty, defaults to admin (for business owners registering).
+        COALESCE(NEW.raw_user_meta_data->>'role', 'admin'), -- If empty, defaults to admin (for business owners registering).
+        NEW.raw_user_meta_data->>'phone',
+        NULLIF(NEW.raw_user_meta_data->>'admin_id', '')::uuid
     );
     RETURN NEW;
 END;

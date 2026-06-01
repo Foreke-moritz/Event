@@ -10,7 +10,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     if(!user) return;
 
     // Load Currency
-    const { data: bset } = await supabase.from('business_settings').select('currency').eq('admin_id', user.id).single();
+    const { data: bset } = await supabase.from('business_settings').select('currency').eq('admin_id', user.id).maybeSingle();
     if(bset && bset.currency) {
         businessCurrency = bset.currency;
         document.querySelectorAll('.currency-label').forEach(el => el.textContent = businessCurrency);
@@ -18,7 +18,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     // Modal Control
     const modal = document.getElementById('modalProduct');
-    document.querySelector('a[href="#modalProduct"]').addEventListener('click', (e) => {
+    document.getElementById('btnAddProduct').addEventListener('click', (e) => {
         e.preventDefault();
         document.getElementById('productForm').reset();
         document.getElementById('pId').value = '';

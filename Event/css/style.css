@@ -632,3 +632,6 @@ table tbody tr:hover {
     .sidebar-toggle { display: block; }
     .content-area { padding: 1.5rem; }
 }
+
+html { scroll-behavior: smooth; }
+
