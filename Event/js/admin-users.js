@@ -55,13 +55,13 @@ document.addEventListener('DOMContentLoaded', async () => {
     };
 
 
-    // Bypass SDK Session Overlap Explicitly!
-    // Since Supabase JS v2 logs the current user out upon `signUp`, we bypass the SDK completely 
-    // and manually fire a REST API request to `/auth/v1/signup` explicitly maintaining session integrity locally!
+    // Staff Creation Handler
+    // Uses REST API to create the auth user (preserving admin session),
+    // then explicitly inserts the profile row via the admin's SDK session.
     document.getElementById('staffForm').addEventListener('submit', async(e) => {
         e.preventDefault();
         const btn = document.getElementById('btnSaveStaff');
-        btn.disabled = true; btn.innerHTML = '<span class="spinner"></span> Routing API Bypass...';
+        btn.disabled = true; btn.innerHTML = '<span class="spinner"></span> Creating Staff Account...';
 
         const name = document.getElementById('sName').value.trim();
         const email = document.getElementById('sEmail').value.trim();
@@ -69,42 +69,73 @@ document.addEventListener('DOMContentLoaded', async () => {
         const pass = document.getElementById('sPass').value;
 
         try {
-            // Backup the admin's session before SDK overrides it
-            const { data: { session } } = await supabase.auth.getSession();
-
-            // Provision staff securely via core SDK handling metadata perfectly natively
-            const { data, error } = await supabase.auth.signUp({
-                email: email,
-                password: pass,
-                options: {
+            // Step 1: Create auth user via REST to avoid session swap
+            const response = await fetch(`${SUPABASE_URL}/auth/v1/signup`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'apikey': SUPABASE_ANON_KEY,
+                    'Authorization': `Bearer ${SUPABASE_ANON_KEY}`
+                },
+                body: JSON.stringify({
+                    email: email,
+                    password: pass,
                     data: {
                         full_name: name,
                         phone: phone,
                         role: 'staff',
-                        admin_id: session.user.id
+                        admin_id: user.id
                     }
-                }
+                })
             });
 
-            if (error) {
-                Utils.showToast(error.message, "error");
-            } else {
-                Utils.showToast("Staff Member provisioned flawlessly!", "success");
-                document.getElementById('staffForm').reset();
-                document.getElementById('modalStaff').style.display = 'none';
-                
-                // Immediately restore the Admin's session natively to prevent redirect overlaps!
-                if (session) {
-                    await supabase.auth.setSession({
-                        access_token: session.access_token,
-                        refresh_token: session.refresh_token
-                    });
-                }
-                
-                loadStaff();
+            const result = await response.json();
+
+            if (!response.ok) {
+                Utils.showToast(result.msg || result.error_description || "Failed to create staff auth account.", "error");
+                btn.disabled = false; btn.innerHTML = 'Execute Profile Registration';
+                return;
             }
+
+            const newUserId = result.id;
+            if (!newUserId) {
+                Utils.showToast("Account created but no user ID returned. Please try again.", "error");
+                btn.disabled = false; btn.innerHTML = 'Execute Profile Registration';
+                return;
+            }
+
+            // Step 2: Wait briefly for the DB trigger to fire
+            await new Promise(r => setTimeout(r, 1500));
+
+            // Step 3: Check if the trigger already created the profile
+            const { data: existingProfile } = await supabase.from('profiles').select('id').eq('id', newUserId).maybeSingle();
+
+            if (!existingProfile) {
+                // Trigger didn't create the profile — insert it manually as the admin
+                const { error: insertErr } = await supabase.from('profiles').insert({
+                    id: newUserId,
+                    full_name: name,
+                    phone: phone || null,
+                    role: 'staff',
+                    admin_id: user.id,
+                    is_active: true
+                });
+
+                if (insertErr) {
+                    console.error("Manual profile insert failed:", insertErr);
+                    Utils.showToast("Auth account created, but profile link failed: " + insertErr.message, "error");
+                    btn.disabled = false; btn.innerHTML = 'Execute Profile Registration';
+                    return;
+                }
+            }
+
+            Utils.showToast("Staff Member provisioned successfully!", "success");
+            document.getElementById('staffForm').reset();
+            document.getElementById('modalStaff').style.display = 'none';
+            loadStaff();
+
         } catch (err) {
-            Utils.showToast("Critical execution failure: " + err.message, "error");
+            Utils.showToast("Critical failure: " + err.message, "error");
         }
 
         btn.disabled = false; btn.innerHTML = 'Execute Profile Registration';
