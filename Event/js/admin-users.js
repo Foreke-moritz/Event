@@ -69,39 +69,42 @@ document.addEventListener('DOMContentLoaded', async () => {
         const pass = document.getElementById('sPass').value;
 
         try {
-            // Because Supabase handles triggers natively resolving admin_id, we just pass the metadata cleanly via REST POST!
-            // We pull the URL/KEY from window context mapped in supabase-config
-            const response = await fetch(`${SUPABASE_URL}/auth/v1/signup`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'apikey': SUPABASE_ANON_KEY,
-                    'Authorization': `Bearer ${SUPABASE_ANON_KEY}`
-                },
-                body: JSON.stringify({
-                    email: email,
-                    password: pass,
+            // Backup the admin's session before SDK overrides it
+            const { data: { session } } = await supabase.auth.getSession();
+
+            // Provision staff securely via core SDK handling metadata perfectly natively
+            const { data, error } = await supabase.auth.signUp({
+                email: email,
+                password: pass,
+                options: {
                     data: {
                         full_name: name,
                         phone: phone,
                         role: 'staff',
-                        admin_id: user.id // Trigger explicitly absorbs this correctly securely bypassing client overrides natively
+                        admin_id: session.user.id
                     }
-                })
+                }
             });
 
-            const result = await response.json();
-            
-            if(!response.ok) {
-                Utils.showToast(result.msg || "REST Execution failed natively.", "error");
+            if (error) {
+                Utils.showToast(error.message, "error");
             } else {
                 Utils.showToast("Staff Member provisioned flawlessly!", "success");
                 document.getElementById('staffForm').reset();
                 document.getElementById('modalStaff').style.display = 'none';
+                
+                // Immediately restore the Admin's session natively to prevent redirect overlaps!
+                if (session) {
+                    await supabase.auth.setSession({
+                        access_token: session.access_token,
+                        refresh_token: session.refresh_token
+                    });
+                }
+                
                 loadStaff();
             }
         } catch (err) {
-            Utils.showToast("Critical Network failure: " + err.message, "error");
+            Utils.showToast("Critical execution failure: " + err.message, "error");
         }
 
         btn.disabled = false; btn.innerHTML = 'Execute Profile Registration';
