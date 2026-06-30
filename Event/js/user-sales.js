@@ -149,6 +149,22 @@ document.addEventListener('DOMContentLoaded', async () => {
         const overallProfit = cart.reduce((s, itm) => s + ((itm.prod.selling_price - (itm.prod.cost_price||0)) * itm.qty), 0);
         const discFloat = parseFloat(inDisc.value) || 0;
         
+        // Final synchronous stock lock verify precisely before inserting the sale record
+        const cartIds = cart.map(c => c.prod.id);
+        const { data: freshStock } = await supabase.from('products').select('id, quantity').in('id', cartIds);
+        
+        if (freshStock) {
+            for (const item of cart) {
+                const fresh = freshStock.find(fs => fs.id === item.prod.id);
+                if (!fresh || fresh.quantity < item.qty) {
+                    Utils.showToast(`Transaction halted! ${item.prod.name} has insufficient live stock.`, "error");
+                    btn.disabled = false; btn.innerHTML = 'Lock Transaction natively!'; 
+                    await loadProducts(); // Refresh POS array dynamically
+                    return;
+                }
+            }
+        }
+        
         // Push Core Record inherently
         const { data: saleRec, error: saleErr } = await supabase.from('sales').insert([{
             admin_id: adminId, staff_id: user.id, customer_name: cName || null,

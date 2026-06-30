@@ -13,7 +13,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     const { data: dbSet } = await supabase.from('business_settings').select('*').eq('admin_id', adminId).single();
     if(dbSet) bSet = { ...bSet, ...dbSet };
 
-    async function loadReceipts(query = '', dStr = '') {
+    async function loadReceipts(query = '', startDate = '', endDate = '') {
         const tbody = document.getElementById('receiptsTbody');
         tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;"><span class="spinner"></span></td></tr>';
 
@@ -21,9 +21,12 @@ document.addEventListener('DOMContentLoaded', async () => {
         let qBuild = supabase.from('sales').select('*').eq('staff_id', user.id).order('sale_date', { ascending: false });
         
         if (query) qBuild = qBuild.ilike('receipt_number', `%${query}%`);
-        if (dStr) {
-            qBuild = qBuild.gte('sale_date', dStr + 'T00:00:00')
-                           .lte('sale_date', dStr + 'T23:59:59');
+        if (startDate && endDate) {
+            qBuild = qBuild.gte('sale_date', startDate + 'T00:00:00')
+                           .lte('sale_date', endDate + 'T23:59:59');
+        } else if (startDate) {
+            qBuild = qBuild.gte('sale_date', startDate + 'T00:00:00')
+                           .lte('sale_date', startDate + 'T23:59:59');
         }
 
         const { data, error } = await qBuild.limit(50);
@@ -51,6 +54,39 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     document.getElementById('btnSearch').addEventListener('click', () => {
         loadReceipts(document.getElementById('sQuery').value.trim(), document.getElementById('sDate').value);
+    });
+
+    const qBtns = document.querySelectorAll('#quickFilters button');
+    qBtns.forEach(btn => {
+        btn.addEventListener('click', (e) => {
+            qBtns.forEach(b => { b.classList.remove('btn-primary'); b.classList.add('btn-outline'); });
+            e.target.classList.remove('btn-outline');
+            e.target.classList.add('btn-primary');
+
+            const f = e.target.getAttribute('data-filter');
+            const now = new Date();
+            let start = '', end = '';
+
+            document.getElementById('sQuery').value = '';
+            document.getElementById('sDate').value = '';
+
+            if (f === 'today') {
+                start = now.toISOString().split('T')[0];
+                end = start;
+            } else if (f === 'week') {
+                const firstDay = new Date(now.setDate(now.getDate() - now.getDay()));
+                const lastDay = new Date(now.setDate(now.getDate() - now.getDay() + 6));
+                start = firstDay.toISOString().split('T')[0];
+                end = lastDay.toISOString().split('T')[0];
+            } else if (f === 'month') {
+                const firstDay = new Date(now.getFullYear(), now.getMonth(), 1);
+                const lastDay = new Date(now.getFullYear(), now.getMonth() + 1, 0);
+                start = firstDay.toISOString().split('T')[0];
+                end = lastDay.toISOString().split('T')[0];
+            }
+
+            loadReceipts('', start, end);
+        });
     });
 
     window.reprintReceipt = async (saleId) => {

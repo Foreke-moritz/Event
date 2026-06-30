@@ -51,10 +51,16 @@
 
             <div class="content-area">
                 <div class="card">
-                    <div class="filter-bar">
+                    <div class="filter-bar" style="margin-bottom: 0.75rem;">
                         <input type="text" id="sQuery" class="form-control" placeholder="Search Receipt Number...">
                         <input type="date" id="sDate" class="form-control">
                         <button class="btn btn-outline" id="btnSearch"><i class="fa-solid fa-magnifying-glass"></i> Search</button>
+                    </div>
+                    <div class="d-flex gap-2" style="margin-bottom: 1.5rem; flex-wrap: wrap;" id="quickFilters">
+                        <button class="btn btn-outline" style="padding:0.4rem 0.8rem; font-size:0.85rem;" data-filter="today">Today</button>
+                        <button class="btn btn-outline" style="padding:0.4rem 0.8rem; font-size:0.85rem;" data-filter="week">This Week</button>
+                        <button class="btn btn-outline" style="padding:0.4rem 0.8rem; font-size:0.85rem;" data-filter="month">This Month</button>
+                        <button class="btn btn-outline" style="padding:0.4rem 0.8rem; font-size:0.85rem;" data-filter="all">All Time</button>
                     </div>
 
                     <div class="table-container">
