@@ -80,7 +80,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                 body: JSON.stringify({
                     email: email,
                     password: pass,
-                    data: {
+                    user_metadata: {
                         full_name: name,
                         phone: phone,
                         role: 'staff',
@@ -97,7 +97,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                 return;
             }
 
-            const newUserId = result.id;
+            const newUserId = result.id || result.user?.id;
             if (!newUserId) {
                 Utils.showToast("Account created but no user ID returned. Please try again.", "error");
                 btn.disabled = false; btn.innerHTML = 'Execute Profile Registration';
