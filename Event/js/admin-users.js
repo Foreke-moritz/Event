@@ -80,7 +80,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                 body: JSON.stringify({
                     email: email,
                     password: pass,
-                    user_metadata: {
+                    data: {
                         full_name: name,
                         phone: phone,
                         role: 'staff',
