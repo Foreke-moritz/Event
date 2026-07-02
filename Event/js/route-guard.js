@@ -19,13 +19,13 @@ class RouteGuard {
                              currentPath === '';
 
         const isAdminPath = currentPath.includes('/admin/');
-        const isUserPath = currentPath.includes('/user/');
+        const isStaffPath = currentPath.includes('/staff/');
 
         const { data: { session } } = await supabase.auth.getSession();
         
         // --- Not Logged In ---
         if (!session) {
-            if (isAdminPath || isUserPath) {
+            if (isAdminPath || isStaffPath) {
                 const depthFix = currentPath.split('/').length > 2 ? '../' : './';
                 window.location.replace(`${depthFix}login.html`);
             } else {
@@ -41,28 +41,28 @@ class RouteGuard {
         
         if (!profile || !profile.is_active) {
             await supabase.auth.signOut();
-            const depthFix = (isAdminPath || isUserPath) ? '../' : './';
+            const depthFix = (isAdminPath || isStaffPath) ? '../' : './';
             window.location.replace(`${depthFix}login.html`);
             return;
         }
 
         const role = profile.role || 'user'; // 'admin' or 'staff'
-        const depthFix = (isAdminPath || isUserPath) ? '../' : './';
+        const depthFix = (isAdminPath || isStaffPath) ? '../' : './';
 
         // 1. Logged in Users hitting Public bounds (e.g., login.html)
         if (isPublicPath) {
             if (role === 'admin') window.location.replace('admin/dashboard.html');
-            else window.location.replace('user/dashboard.html');
+            else window.location.replace('staff/dashboard.html');
             return;
         }
 
         // 2. Intrusions Resolving
         if (isAdminPath && role !== 'admin') {
-            window.location.replace('../user/dashboard.html');
+            window.location.replace('../staff/dashboard.html');
             return;
         }
 
-        if (isUserPath && role === 'admin') {
+        if (isStaffPath && role === 'admin') {
             window.location.replace('../admin/dashboard.html');
             return;
         }

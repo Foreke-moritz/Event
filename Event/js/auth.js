@@ -52,7 +52,7 @@ document.addEventListener('DOMContentLoaded', () => {
             Utils.showToast("Login Successful!", "success");
             setTimeout(() => {
                 if (profile.role === 'admin') window.location.href = 'admin/dashboard.html';
-                else window.location.href = 'user/dashboard.html';
+                else window.location.href = 'staff/dashboard.html';
             }, 800);
         });
     }
@@ -157,7 +157,7 @@ window.handleLogout = async () => {
         await supabase.auth.signOut();
         // Determine routing bounce properly
         const path = window.location.pathname;
-        if(path.includes('/admin/') || path.includes('/user/')) window.location.replace('../login.html');
+        if(path.includes('/admin/') || path.includes('/staff/')) window.location.replace('../login.html');
         else window.location.replace('login.html');
     } catch(err) {
         window.location.replace('../login.html');
